@@ -1,0 +1,17 @@
+{
+  "name": "benchbot",
+  "version": "1.0.0",
+  "description": "Discord Bot for the Blockbench server",
+  "main": "index.js",
+  "author": "JannisX11",
+  "license": "ISC",
+  "scripts": {
+    "start": "pm2 start index.js --error ./logs/bot.log",
+    "stop": "pm2 stop index.js",
+    "reload": "pm2 reload index.js"
+  },
+  "dependencies": {
+    "discord.js": "^12.0.2",
+    "string-similarity": "^3.0.0"
+  }
+}
