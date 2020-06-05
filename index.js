@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 var stringSimilarity = require('string-similarity');
 var fs = require('fs')
+var path = require('path')
 
 const Bot = new Discord.Client();
 var TOKEN = process.env.token;
@@ -38,7 +39,8 @@ function relocateMessage(user, channel) {
         Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''))
 }
 
-const userdata_path = './../benchbot_settings.json'
+const userdata_path = path.join(process.execPath, './../benchbot_settings.json')
+console.log(userdata_path)
 
 
 var FAQ = {};
