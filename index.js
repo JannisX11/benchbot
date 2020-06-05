@@ -39,8 +39,7 @@ function relocateMessage(user, channel) {
         Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''))
 }
 
-const userdata_path = path.join(process.execPath, './../benchbot_settings.json')
-console.log(userdata_path)
+const userdata_path = './benchbot_settings.json';
 
 
 var FAQ = {};
