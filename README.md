@@ -1,0 +1,2 @@
+# benchbot
+Benchbot Discord Bot
