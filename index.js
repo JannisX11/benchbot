@@ -7,7 +7,7 @@ const Bot = new Discord.Client();
 var TOKEN = process.env.token;
 
 const messageAwaiters = [];
-const OptifineMobs = require('./mobparts')
+const { request } = require('http');
 
 const cl = console.log;
 var cmd_channel;
@@ -63,6 +63,40 @@ function saveSettings() {
     });
 }
 
+const Commands = {
+    async mobparts(msg, args) {
+        let plugin_note = `***Note: **You can use the **CEM Template Loader** plugin to create a working template with the correct part names.*\n`
+
+        let file = await new Promise((resolve, reject) => {
+            request(`https://raw.githubusercontent.com/ewanhowell5195/discord_bot_assets/master/cem_models.txt`, (err, res, body) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(body)
+            });
+        })
+        if (!file) return;
+        let OptifineMobs = {};
+        file.split(/\n/).forEach(line => {
+            if (line.substr(0, 1) == '-') return;
+            let [key, value] = line.split(/\|(.+)/);
+            OptifineMobs[key.trim()] = value;
+        })
+        
+
+        if (args[1]) {
+            var bones = OptifineMobs[args[1]];
+            if (bones) {
+                msg.channel.send(`${plugin_note}The entity '${args[1]}' has the following parts: \n\`\`\`${bones}\`\`\``);
+            } else {
+                msg.channel.send(`The entity '${args[1]}' cannot be changed with OptiFine.`);
+            }
+        } else {
+            msg.channel.send(`${plugin_note}OptiFine support the following entities: \n\`\`\`${Object.keys(OptifineMobs).join(', ')}\`\`\``);
+        }
+    }
+}
 
 Bot.on('message', msg => {
     
@@ -167,17 +201,7 @@ Bot.on('message', msg => {
         }
 
         if (cmd == 'mobparts' && msg.channel.name === 'help-optifine') {
-            let plugin_note = `***Note: **You can use the **CEM Template Loader** plugin to create a working template with the correct part names.*\n`
-            if (args[1]) {
-                var bones = OptifineMobs[args[1]];
-                if (bones) {
-                    msg.channel.send(`${plugin_note}The entity '${args[1]}' has the following parts: \n\`\`\`${bones}\`\`\``);
-                } else {
-                    msg.channel.send(`The entity '${args[1]}' cannot be changed with OptiFine.`);
-                }
-            } else {
-                msg.channel.send(`${plugin_note}OptiFine support the following entities: \n\`\`\`${Object.keys(OptifineMobs).join(', ')}\`\`\``);
-            }
+            Commands.mobparts(msg, args);
             return;
         }
 
@@ -263,10 +287,10 @@ Bot.on('message', msg => {
                         if (j.company instanceof Rejection) return j.company;
     
                         if (j.company) {
-                            j.about = await askDMQuestion(`Tell me a bit about your team or company`);
+                            j.about = await askDMQuestion(`Tell me a bit about your team or company\n`);
                             if (j.about instanceof Rejection) return j.about;
                         } else {
-                            j.about = await askDMQuestion(`Tell me a bit about yourself`);
+                            j.about = await askDMQuestion(`Tell me a bit about yourself\nDetailed information can help make people interested in your project. Here are some questions for orientation:\n- What do you do, what do you specialize in?\n- How much experience do you have?\n- Have you worked on and finished any projects in the past?`);
                             if (j.about instanceof Rejection) return j.about;
                         }
     
