@@ -7,7 +7,7 @@ const Bot = new Discord.Client();
 var TOKEN = process.env.token;
 
 const messageAwaiters = [];
-const { request } = require('http');
+const request = require('request');
 
 const cl = console.log;
 var cmd_channel;
@@ -200,7 +200,7 @@ Bot.on('message', msg => {
             return;
         }
 
-        if (cmd == 'mobparts' && msg.channel.name === 'help-optifine') {
+        if (cmd == 'mobparts' && (msg.channel.name === 'help-optifine' || msg.channel.type == 'dm')) {
             Commands.mobparts(msg, args);
             return;
         }
