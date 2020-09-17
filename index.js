@@ -31,9 +31,10 @@ Bot.on('ready', msg => {
 
 
 
-function relocateMessage(user, channel) {
+function relocateMessage(user, channel, trigger_user) {
     channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
-        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''))
+        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
+    cmd_channel.send(`${trigger_user||'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
 }
 
 const userdata_path = './benchbot_settings.json';
@@ -220,7 +221,7 @@ Bot.on('message', msg => {
         }
 
         if (cmd == 'relocate') {
-            relocateMessage('', msg.channel)
+            relocateMessage('', msg.channel, msg.author)
             return;
         }
 
@@ -422,7 +423,7 @@ Bot.on('messageReactionAdd', (reaction, user) => {
     let name = reaction._emoji.name
 
     if (name == 'relocate' && !reaction.message.author.bot && reaction.count == 1) {
-        relocateMessage(reaction.message.author, reaction.message.channel)
+        relocateMessage(reaction.message.author, reaction.message.channel, user)
         reaction.message.react(reaction.emoji).then(console.log).catch(console.log)
         reaction.emoji
 
