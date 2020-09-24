@@ -128,18 +128,25 @@ Bot.on('message', msg => {
         
         if (attachment && ['png', 'jpg', 'jpeg', 'gif'].includes(attachment.url.split('.').pop().toLowerCase())) {
         
-            var img = new Discord.MessageAttachment(msg.attachments.first().url);
             var archive_channel = Bot.channels.cache.find(ch => ch.name === 'model-archive');
-    
-            var text = `**Model by ${msg.author}**`;
-            var title = msg.content.replace(/^\[P\]\s*/, '')
-            if (title) {
-                text += `\n*"${title}"*`;
-            }
-            text += `\n${msg.url}`
-            if (archive_channel) {
-                archive_channel.send(text, img)
-            }
+            if (!archive_channel) return:
+
+            var image = new Discord.MessageAttachment(msg.attachments.first().url);
+            let message_text = msg.content.replace(/^\[P\]\s*/, '')
+            let [title, description] = message_text.split(/\n([\s\S]+)/);
+            let embed = new Discord.MessageEmbed({
+                color: '#3e90ff',
+                type: 'image',
+                url: msg.url,
+                author: {
+                    name: msg.author.username,
+                    iconURL: msg.author.avatarURL
+                },
+                title,
+                description,
+                image
+            });
+            archive_channel.send(embed);
         }
         return;
     }
