@@ -140,8 +140,8 @@ Bot.on('message', msg => {
                     name: msg.author.username,
                     iconURL: msg.author.avatarURL()
                 },
-                title,
-                description: (description ? (description + '\n') : '') + `by ${msg.author}\n${msg.url}`,
+                description: `[**${title}**](${msg.url})\n`
+                    + (description ? (description + '\n') : '') + `by ${msg.author}`,
                 image: msg.attachments.first()
             });
             archive_channel.send(embed);
@@ -236,9 +236,9 @@ Bot.on('message', msg => {
 
                 if (msg.channel.type != 'dm') {
                     if (Math.random() < 0.05) {
-                        msg.channel.send('Slide into my DMs to create a new job post!')
+                        msg.channel.send(`Slide into my DMs to create a new job post!`)
                     } else {
-                        msg.channel.send('You can only use this command in my DMs')
+                        msg.channel.send(`${msg.author} You can only use this command in my DMs`)
                     }
                     return;
                 }
@@ -426,15 +426,15 @@ Bot.on('message', msg => {
 
 Bot.on('messageReactionAdd', (reaction, user) => {
     let name = reaction._emoji.name
+    let {message} = reaction;
 
-    if (name == 'relocate' && !reaction.message.author.bot && reaction.count == 1) {
-        relocateMessage(reaction.message.author, reaction.message.channel, user)
-        reaction.message.react(reaction.emoji).then(console.log).catch(console.log)
-        reaction.emoji
+    if (name == 'relocate' && !message.author.bot && reaction.count == 1) {
+        relocateMessage(message.author, message.channel, user)
+        message.react(reaction.emoji).then(console.log).catch(console.log)
 
-    } else if (name == 'delete' || name == '❌') {
-        if (reaction.message.mentions.has(user) && reaction.message.author.bot) {
-            reaction.message.delete()
+    } else if (name == 'delete' && message.author.bot) {
+        if (message.mentions.has(user) || (message.embeds && message.embeds[0] && message.embeds[0].description.includes(user.toString()))) {
+            message.delete()
         }
     }
 })
