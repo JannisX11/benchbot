@@ -144,7 +144,9 @@ Bot.on('message', msg => {
                     + (description ? (description + '\n') : '') + `by ${msg.author}`,
                 image: msg.attachments.first()
             });
-            archive_channel.send(embed);
+            archive_channel.send(embed).then(pin => {
+                pin.crosspost();
+            });
         }
         return;
     }
