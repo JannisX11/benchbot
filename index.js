@@ -145,7 +145,11 @@ Bot.on('message', msg => {
                 image: msg.attachments.first()
             });
             archive_channel.send(embed).then(pin => {
-                pin.crosspost();
+                setTimeout(() => {
+                    if (!pin.deleted) {
+                        pin.crosspost();
+                    }
+                }, 10 * 60 * 1000)
             });
         }
         return;
