@@ -179,10 +179,25 @@ Bot.on('message', msg => {
                 if (FAQ[key]) {
                     msg.channel.send(`Removed the question '${key}'`);
                     delete FAQ[key];
+                    saveSettings();
                 } else {
                     msg.channel.send(`Question not found`);
                 }
-                saveSettings();
+
+            } else if (msg.channel.name === 'bot-commands' && args[1] == 'rename') {
+
+                var old_name = args[2].toLowerCase();
+                var new_name = args[3].toLowerCase();
+                if (FAQ[old_name] && new_name) {
+                    FAQ[new_name] = FAQ[old_name];
+                    delete FAQ[old_name];
+                    msg.channel.send(`Renamed the question '${old_name}' to '${new_name}'`);
+                    saveSettings();
+                } else if (!FAQ[old_name]) {
+                    msg.channel.send(`Question not found`);
+                } else {
+                    msg.channel.send(`Invalid number of arguments`);
+                }
 
             } else if (msg.channel.name === 'bot-commands' && args[1] == 'raw') {
 

@@ -4,7 +4,7 @@
   "description": "Discord Bot for the Blockbench server",
   "main": "index.js",
   "author": "JannisX11",
-  "license": "ISC",
+  "private": true,
   "scripts": {
     "start": "pm2 start index.js --error ./logs/bot.log",
     "stop": "pm2 stop index.js",
