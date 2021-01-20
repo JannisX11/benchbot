@@ -37,8 +37,8 @@ function relocateMessage(user, channel, trigger_member) {
 
         Please take a few seconds to answer this survey to help us improve this Discord server: <https://forms.gle/8tMJe7tQF6H8FFnj6>`.replace(/    /g, ''));
 
-    if (!trigger_member || !trigger_member?.roles?.cache.find(role => role.name == 'Moderator')) {
-        cmd_channel.send(`${trigger_member?.user || 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
+    if (!trigger_member || !trigger_member.roles || !trigger_member.roles.cache.find(role => role.name == 'Moderator')) {
+        cmd_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
     }
 }
 
