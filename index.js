@@ -31,10 +31,15 @@ Bot.on('ready', msg => {
 
 
 
-function relocateMessage(user, channel, trigger_user) {
+function relocateMessage(user, channel, trigger_member) {
     channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
-        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
-    cmd_channel.send(`${trigger_user||'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
+        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>
+
+        Please take a few seconds to answer this survey to help us improve this Discord server: <https://forms.gle/8tMJe7tQF6H8FFnj6>`.replace(/    /g, ''));
+
+    if (!trigger_member || !trigger_member?.roles?.cache.find(role => role.name == 'Moderator')) {
+        cmd_channel.send(`${trigger_member?.user || 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
+    }
 }
 
 const userdata_path = './benchbot_settings.json';
@@ -100,7 +105,7 @@ const Commands = {
 }
 
 Bot.on('message', msg => {
-    
+
     if (msg.author.bot) {
         return;
     }
@@ -247,7 +252,7 @@ Bot.on('message', msg => {
         }
 
         if (cmd == 'relocate') {
-            relocateMessage('', msg.channel, msg.author)
+            relocateMessage('', msg.channel, msg.member)
             return;
         }
 
@@ -450,7 +455,7 @@ Bot.on('messageReactionAdd', (reaction, user) => {
     let {message} = reaction;
 
     if (name == 'relocate' && !message.author.bot && reaction.count == 1) {
-        relocateMessage(message.author, message.channel, user)
+        relocateMessage(message.author, message.channel, message.guild.member(user))
         message.react(reaction.emoji).then(console.log).catch(console.log)
 
     } else if (name == 'delete' && message.author.bot) {
