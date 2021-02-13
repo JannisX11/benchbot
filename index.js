@@ -33,9 +33,7 @@ Bot.on('ready', msg => {
 
 function relocateMessage(user, channel, trigger_member) {
     channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
-        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>
-
-        Please take a few seconds to answer this survey to help us improve this Discord server: <https://forms.gle/8tMJe7tQF6H8FFnj6>`.replace(/    /g, ''));
+        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
 
     if (!trigger_member || !trigger_member.roles || !trigger_member.roles.cache.find(role => role.name == 'Moderator')) {
         cmd_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
@@ -308,10 +306,10 @@ Bot.on('message', msg => {
                         }
                     }
     
-                    j.artist = await askDMQuestion('Are you looking for __work__ or are you looking for an __artist__? Please reply with the underlined keyword.', 'artist');
-                    if (j.artist instanceof Rejection) return j.artist;
+                    j.is_job_offer = await askDMQuestion('Are you looking for __work__ or are you looking for an __artist__? Please reply with the underlined keyword.', 'artist');
+                    if (j.is_job_offer instanceof Rejection) return j.is_job_offer;
     
-                    if (j.artist) {
+                    if (j.is_job_offer) {
                         j.position = await askDMQuestion(`Are you offering a __single__ commission or a __long-term__ position? Or do you offer __both__?`, ['single', 'long-term', 'both']);
                         if (j.position instanceof Rejection) return j.position;
     
@@ -388,7 +386,7 @@ Bot.on('message', msg => {
                         } else {
                             asset_array = asset_array[0];
                         }
-    
+
     
                         j.full_post = [
                             `---------------`,
@@ -397,20 +395,25 @@ Bot.on('message', msg => {
                             `**Type:** ${['Commission', 'Longer-Term Position', 'Single or Longer-Term'][j.position]}`,
                             `**Rate:** ${j.rate}`,
                             `**Description:** ${j.about}`,
-                            `**Portfolio:** <${j.portfolio}>`,
+                            `**Portfolio:** ${j.portfolio}`,
                             `---------------`,
                         ].join('\n');
                     }
-    
+                    
+                    // Hide link widgets
+                    j.full_post = j.full_post.replace(/https?:\/\/[\w]+\.[^\s]+/g, (url) => {
+                        return `<${url}>`;
+                    })
     
                     msg.author.send(`Do you want to submit the following job post? (__yes__/__no__)`);
                     j.submit = await askDMQuestion(j.full_post, 'yes');
                     if (j.submit instanceof Rejection) return j.submit;
 
                     if (j.submit) {
-                        var job_list_channel = Bot.channels.cache.find(ch => ch.name === 'job-list');
+                        let target_channel = j.is_job_offer ? 'job-list' : 'artist-list'
+                        var job_list_channel = Bot.channels.cache.find(ch => ch.name === target_channel);
                         job_list_channel.send(j.full_post).then(list_msg => {
-                            msg.author.send(`The job post has been posted to the job-list channel. You can remove it by reacting with the :delete: emoji.`);
+                            msg.author.send(`The job post has been posted to the \`${target_channel}\` channel. You can remove it by reacting with the :delete: emoji.`);
                             setTimeout(_ => {
                                 msg.author.send(`Benchbot thanks you for using the job service and wishes you good luck with your offer!`);
                             }, 4332)
