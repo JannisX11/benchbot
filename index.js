@@ -72,7 +72,7 @@ const Commands = {
         let plugin_note = `***Note: **You can use the **CEM Template Loader** plugin to create a working template with the correct part names.*\n`
 
         let file = await new Promise((resolve, reject) => {
-            request(`https://raw.githubusercontent.com/ewanhowell5195/discord_bot_assets/master/cem_models.txt`, (err, res, body) => {
+            request(`https://raw.githubusercontent.com/ewanhowell5195/wynem/main/bot_assets/cem_models.json`, (err, res, body) => {
                 if (err) {
                     reject(err);
                     return;
@@ -81,23 +81,25 @@ const Commands = {
             });
         })
         if (!file) return;
-        let OptifineMobs = {};
-        file.split(/\n/).forEach(line => {
-            if (line.substr(0, 1) == '-') return;
-            let [key, value] = line.split(/\|(.+)/);
-            OptifineMobs[key.trim()] = value;
-        })
-        
+        var File;
+        try {
+            File = JSON.parse(file)
+        } catch (err) {
+            msg.channel.send(plugin_note + 'Failed to load mob data')
+        }
 
         if (args[1]) {
-            var bones = OptifineMobs[args[1]];
-            if (bones) {
-                msg.channel.send(`${plugin_note}The entity '${args[1]}' has the following parts: \n\`\`\`${bones}\`\`\``);
-            } else {
+            var mob = File.entities.supported[args[1]];
+            if (mob) {
+                msg.channel.send(`${plugin_note}The entity '${mob.display_name}' has the following parts: \n\`\`\`${mob.bones.join(', ')}\`\`\``);
+            } else if (File.entities.unsupported[args[1]]) {
                 msg.channel.send(`The entity '${args[1]}' cannot be changed with OptiFine.`);
+            } else {
+                msg.channel.send(`Could find the entity '${args[1]}'`);
             }
         } else {
-            msg.channel.send(`${plugin_note}OptiFine support the following entities: \n\`\`\`${Object.keys(OptifineMobs).join(', ')}\`\`\``);
+            msg.channel.send(`${plugin_note}OptiFine support the following entities: \n\`\`\`${Object.keys(File.entities.supported).join(', ')}\`\`\``
+			    +`\nThese things can currently not be changed: \n\`\`\`${File.entities.unsupported.join(', ')}\`\`\``);
         }
     }
 }
