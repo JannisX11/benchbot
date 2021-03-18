@@ -16,6 +16,9 @@ Array.prototype.random = function() {
     return this[Math.floor(Math.random()*this.length)]
 }
 
+const FAQ_timeouts = {
+
+}
 
 Bot.login(TOKEN).catch(err => {
     throw err;
@@ -29,19 +32,7 @@ Bot.on('ready', msg => {
     }
 })
 
-
-
-function relocateMessage(user, channel, trigger_member) {
-    channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
-        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
-
-    if (!trigger_member || !trigger_member.roles || !trigger_member.roles.cache.find(role => role.name == 'Moderator')) {
-        cmd_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
-    }
-}
-
 const userdata_path = './benchbot_settings.json';
-
 
 var FAQ = {};
 fs.readFile(userdata_path, 'utf-8', function (err, data) {
@@ -65,6 +56,15 @@ function saveSettings() {
     fs.writeFile(userdata_path, JSON.stringify(root), function(err) {
         if (err) throw err;
     });
+}
+
+function relocateMessage(user, channel, trigger_member) {
+    channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
+        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
+
+    if (!trigger_member || !trigger_member.roles || !trigger_member.roles.cache.find(role => role.name == 'Moderator')) {
+        cmd_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
+    }
 }
 
 const Commands = {
@@ -100,6 +100,98 @@ const Commands = {
         } else {
             msg.channel.send(`${plugin_note}OptiFine support the following entities: \n\`\`\`${Object.keys(File.entities.supported).join(', ')}\`\`\``
 			    +`\nThese things can currently not be changed: \n\`\`\`${File.entities.unsupported.join(', ')}\`\`\``);
+        }
+    },
+    /**
+     * Runs the FAQ command
+     * @param {Discord.Message} msg 
+     * @param {array} args 
+     */
+    faq(msg, args) {
+        if (FAQ_timeouts[msg.member.id] && msg.channel.type != 'dm') {
+            msg.channel.send('You can DM me to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and it gives you an easy way to read up on previous questions you asked me.')
+            clearTimeout(FAQ_timeouts[msg.member.id].timeout);
+            delete FAQ_timeouts[msg.member.id];
+            return;
+        }
+
+        if (msg.channel.name === 'bot-commands' && args[1] == 'set') {
+
+            var key = args[2];
+            var text = args.slice(3).join(' ');
+            if (!text) {
+                delete FAQ[key];
+                msg.channel.send(`Removed the question '${key}'`);
+            } else {
+                msg.channel.send(`${FAQ[key] ? 'Updated' : 'Added'} the question '${key}'`);
+                FAQ[key] = text;
+            }
+            saveSettings();
+
+        } else if (msg.channel.name === 'bot-commands' && args[1] == 'remove') {
+
+            var key = args[2].toLowerCase();
+            if (FAQ[key]) {
+                msg.channel.send(`Removed the question '${key}'`);
+                delete FAQ[key];
+                saveSettings();
+            } else {
+                msg.channel.send(`Question not found`);
+            }
+
+        } else if (msg.channel.name === 'bot-commands' && args[1] == 'rename') {
+
+            var old_name = args[2].toLowerCase();
+            var new_name = args[3].toLowerCase();
+            if (FAQ[old_name] && new_name) {
+                FAQ[new_name] = FAQ[old_name];
+                delete FAQ[old_name];
+                msg.channel.send(`Renamed the question '${old_name}' to '${new_name}'`);
+                saveSettings();
+            } else if (!FAQ[old_name]) {
+                msg.channel.send(`Question not found`);
+            } else {
+                msg.channel.send(`Invalid number of arguments`);
+            }
+
+        } else if (msg.channel.name === 'bot-commands' && args[1] == 'raw') {
+
+            let key = args[2].toLowerCase()                
+            if (FAQ[key]) {
+                msg.channel.send('```\n'+FAQ[key]+'\n```');
+            }
+
+        } else if (args[1] == 'list' || args[1] == undefined) {
+            msg.channel.send(`Available questions: \`${Object.keys(FAQ).join(',  ')}\``);
+
+        } else if (args[1]) {
+            if (FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count == 3) {
+                msg.channel.send(`${FAQ[key]}`);
+            }
+
+            let key = args[1].toLowerCase()                
+            if (FAQ[key]) {
+                msg.channel.send(`${FAQ[key]}`);
+            } else {
+                var {bestMatch} = stringSimilarity.findBestMatch(key, Object.keys(FAQ));
+                if (bestMatch && bestMatch.rating > 0.5) {
+                    msg.channel.send(`(Result for "${bestMatch.target}")\n${FAQ[bestMatch.target]}`);
+                } else {
+                    msg.channel.send(`Question '${key}' not found!`);
+                }
+            }
+        }
+        if (msg.channel.name != 'bot-commands' && !msg.member.roles.cache.find(role => role.name == 'Moderator') && msg.channel.type != 'dm')
+            if (FAQ_timeouts[msg.member.id]) {
+                FAQ_timeouts[msg.member.id].count++;
+            } else {
+                FAQ_timeouts[msg.member.id] = {
+                    timeout: setTimeout(() => {
+                        delete FAQ_timeouts[msg.member.id];
+                    }, 1000*80),
+                    count: 1
+                }
+            }
         }
     }
 }
@@ -165,70 +257,7 @@ Bot.on('message', msg => {
         var cmd = args[0].substr(1)
 
         if (cmd == 'faq') {
-            if (msg.channel.name === 'bot-commands' && args[1] == 'set') {
-
-                var key = args[2];
-                var text = args.slice(3).join(' ');
-                if (!text) {
-                    delete FAQ[key];
-                    msg.channel.send(`Removed the question '${key}'`);
-                } else {
-                    msg.channel.send(`${FAQ[key] ? 'Updated' : 'Added'} the question '${key}'`);
-                    FAQ[key] = text;
-                }
-                saveSettings();
-
-            } else if (msg.channel.name === 'bot-commands' && args[1] == 'remove') {
-
-                var key = args[2].toLowerCase();
-                if (FAQ[key]) {
-                    msg.channel.send(`Removed the question '${key}'`);
-                    delete FAQ[key];
-                    saveSettings();
-                } else {
-                    msg.channel.send(`Question not found`);
-                }
-
-            } else if (msg.channel.name === 'bot-commands' && args[1] == 'rename') {
-
-                var old_name = args[2].toLowerCase();
-                var new_name = args[3].toLowerCase();
-                if (FAQ[old_name] && new_name) {
-                    FAQ[new_name] = FAQ[old_name];
-                    delete FAQ[old_name];
-                    msg.channel.send(`Renamed the question '${old_name}' to '${new_name}'`);
-                    saveSettings();
-                } else if (!FAQ[old_name]) {
-                    msg.channel.send(`Question not found`);
-                } else {
-                    msg.channel.send(`Invalid number of arguments`);
-                }
-
-            } else if (msg.channel.name === 'bot-commands' && args[1] == 'raw') {
-
-            	let key = args[2].toLowerCase()                
-                if (FAQ[key]) {
-                    msg.channel.send('```\n'+FAQ[key]+'\n```');
-                }
-
-            } else if (args[1] == 'list' || args[1] == undefined) {
-                msg.channel.send(`Available questions: \`${Object.keys(FAQ).join(',  ')}\``);
-
-            } else if (args[1]) {
-            	let key = args[1].toLowerCase()                
-                if (FAQ[key]) {
-                    msg.channel.send(`${FAQ[key]}`);
-                } else {
-
-                    var {bestMatch} = stringSimilarity.findBestMatch(key, Object.keys(FAQ));
-                    if (bestMatch && bestMatch.rating > 0.5) {
-                        msg.channel.send(`(Result for "${bestMatch.target}")\n${FAQ[bestMatch.target]}`);
-                    } else {
-                        msg.channel.send(`Question '${key}' not found!`);
-                    }
-
-                }
-            }
+            Commands.faq(msg, args)
             return;
         }
 
