@@ -181,7 +181,7 @@ const Commands = {
                 }
             }
         }
-        if (msg.channel.name != 'bot-commands' && !msg.member.roles.cache.find(role => role.name == 'Moderator') && msg.channel.type != 'dm')
+        if (msg.channel.name != 'bot-commands' && !msg.member.roles.cache.find(role => role.name == 'Moderator') && msg.channel.type != 'dm') {
             if (FAQ_timeouts[msg.member.id]) {
                 FAQ_timeouts[msg.member.id].count++;
             } else {
