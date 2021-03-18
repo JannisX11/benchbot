@@ -108,7 +108,7 @@ const Commands = {
      * @param {array} args 
      */
     faq(msg, args) {
-        if (FAQ_timeouts[msg.member.id] && msg.channel.type != 'dm') {
+        if (FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count >= 2 && msg.channel.type != 'dm') {
             msg.channel.send('You can DM me to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and it gives you an easy way to read up on previous questions you asked me.')
             clearTimeout(FAQ_timeouts[msg.member.id].timeout);
             delete FAQ_timeouts[msg.member.id];
@@ -165,10 +165,6 @@ const Commands = {
             msg.channel.send(`Available questions: \`${Object.keys(FAQ).join(',  ')}\``);
 
         } else if (args[1]) {
-            if (FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count == 3) {
-                msg.channel.send(`${FAQ[key]}`);
-            }
-
             let key = args[1].toLowerCase()                
             if (FAQ[key]) {
                 msg.channel.send(`${FAQ[key]}`);
