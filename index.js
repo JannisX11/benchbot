@@ -108,7 +108,7 @@ const Commands = {
      * @param {array} args 
      */
     faq(msg, args) {
-        if (FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count >= 2 && msg.channel.type != 'dm') {
+        if (msg.channel.type != 'dm' && msg.member && FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count >= 2) {
             msg.channel.send('You can DM me to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and it gives you an easy way to read up on previous questions you asked me.')
             clearTimeout(FAQ_timeouts[msg.member.id].timeout);
             delete FAQ_timeouts[msg.member.id];
@@ -177,7 +177,7 @@ const Commands = {
                 }
             }
         }
-        if (msg.channel.name != 'bot-commands' && !msg.member.roles.cache.find(role => role.name == 'Moderator') && msg.channel.type != 'dm') {
+        if (msg.channel.name != 'bot-commands' && msg.member && !msg.member.roles.cache.find(role => role.name == 'Moderator') && msg.channel.type != 'dm') {
             if (FAQ_timeouts[msg.member.id]) {
                 FAQ_timeouts[msg.member.id].count++;
             } else {
