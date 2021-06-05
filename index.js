@@ -238,6 +238,8 @@ Bot.on('message', msg => {
                 image: msg.attachments.first()
             });
             archive_channel.send(embed).then(pin => {
+                pin.react('bblike');
+
                 setTimeout(() => {
                     if (!pin.deleted) {
                         pin.crosspost();
