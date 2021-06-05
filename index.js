@@ -238,7 +238,8 @@ Bot.on('message', msg => {
                 image: msg.attachments.first()
             });
             archive_channel.send(embed).then(pin => {
-                pin.react('bblike');
+                const reactionEmoji = pin.guild.emojis.cache.find(emoji => emoji.name === 'bblike');
+                pin.react(reactionEmoji);
 
                 setTimeout(() => {
                     if (!pin.deleted) {
