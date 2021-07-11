@@ -99,7 +99,7 @@ const Commands = {
             }
         } else {
             msg.channel.send(`${plugin_note}OptiFine support the following entities: \n\`\`\`${Object.keys(File.entities.supported).join(', ')}\`\`\``
-			    +`\nThese things can currently not be changed: \n\`\`\`${File.entities.unsupported.join(', ')}\`\`\``);
+                +`\nThese things can currently not be changed: \n\`\`\`${File.entities.unsupported.join(', ')}\`\`\``);
         }
     },
     /**
@@ -196,6 +196,17 @@ Bot.on('message', msg => {
 
     if (msg.author.bot) {
         return;
+    }
+
+    if (msg.content.includes('@everyone ') && !msg.member.roles.cache.find(role => role.name == 'Moderator')) {
+        msg.delete();
+        cmd_channel.send(`Deleted a message in #${msg.channel.name} attempting to ping everyone.
+			\`\`\`
+			By: ${msg.author.username}(${msg.author.id})
+			Message: ${msg.content.replace(/´/g, "'")}
+			\`\`\`
+        `.replace(/\t/g, ''));
+		return;
     }
 
     if (msg.mentions.members && msg.mentions.members.first() && msg.mentions.members.first().user.id === Bot.user.id) {
