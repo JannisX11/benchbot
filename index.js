@@ -201,7 +201,7 @@ Bot.on('message', msg => {
 
     if (msg.content.includes('@everyone') && !msg.member.roles.cache.find(role => role.name == 'Moderator')) {
         msg.delete();
-        log_channel.send(`Deleted a message by ${msg.author} in #${msg.channel.name} attempting to ping everyone:
+        log_channel.send(`Deleted a message by ${msg.author} in #${msg.channel} attempting to ping everyone:
 			\`\`\`
 			${msg.content.replace(/´/g, "'")}
 			\`\`\`
