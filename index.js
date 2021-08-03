@@ -10,7 +10,7 @@ const messageAwaiters = [];
 const request = require('request');
 
 const cl = console.log;
-var cmd_channel;
+var cmd_channel, log_channel;
 Math.clamp = (n, a, b) => n < a ? a : n > b ? b : n;
 Array.prototype.random = function() {
     return this[Math.floor(Math.random()*this.length)]
@@ -27,8 +27,9 @@ Bot.login(TOKEN).catch(err => {
 Bot.on('ready', msg => {
     cl('Bot Online')
     cmd_channel = Bot.channels.cache.find(ch => ch.name === 'bot-commands');
-    if (cmd_channel) {
-        cmd_channel.send('I am back online!')
+    log_channel = Bot.channels.cache.find(ch => ch.name === 'bot-log');
+    if (log_channel) {
+        log_channel.send('I am back online!')
     }
 })
 
@@ -63,7 +64,7 @@ function relocateMessage(user, channel, trigger_member) {
         Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
 
     if (!trigger_member || !trigger_member.roles || !trigger_member.roles.cache.find(role => role.name == 'Moderator')) {
-        cmd_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
+        log_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
     }
 }
 
@@ -200,7 +201,7 @@ Bot.on('message', msg => {
 
     if (msg.content.includes('@everyone') && !msg.member.roles.cache.find(role => role.name == 'Moderator')) {
         msg.delete();
-        cmd_channel.send(`Deleted a message by ${msg.author} in #${msg.channel.name} attempting to ping everyone:
+        log_channel.send(`Deleted a message by ${msg.author} in #${msg.channel.name} attempting to ping everyone:
 			\`\`\`
 			${msg.content.replace(/´/g, "'")}
 			\`\`\`
