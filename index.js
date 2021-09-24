@@ -209,6 +209,21 @@ Bot.on('message', msg => {
         `.replace(/\t/g, ''));
 		return;
     }
+    else if (msg.content.match(/https?:\/\//i) &&
+        msg.content.match(/nitro/i) &&
+        !msg.member.roles.cache.find(role => role.name == 'Moderator') &&
+        !msg.content.includes('.epicgames.com/') &&
+        !msg.content.includes('.discord.com/')
+    ) {
+        msg.delete();
+        msg.member.kick('Attempting to spam. Kicked by automatic spam detection. If you thing this was a mistake, please contact us.');
+        log_channel.send(`Deleted a message by ${msg.author} in #${msg.channel} attempting to spam free nitro, and kicked user off the server.
+			\`\`\`
+			${msg.content.replace(/´/g, "'")}
+			\`\`\`
+        `.replace(/\t/g, ''));
+		return;
+    }
 
     if (msg.mentions.members && msg.mentions.members.first() && msg.mentions.members.first().user.id === Bot.user.id) {
         if (msg.content.toLowerCase().includes('ping')) {
