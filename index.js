@@ -11,6 +11,7 @@ const request = require('request');
 
 const cl = console.log;
 var cmd_channel, log_channel;
+const sort_collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
 Math.clamp = (n, a, b) => n < a ? a : n > b ? b : n;
 Array.prototype.random = function() {
     return this[Math.floor(Math.random()*this.length)]
@@ -163,7 +164,8 @@ const Commands = {
             }
 
         } else if (args[1] == 'list' || args[1] == undefined) {
-            msg.channel.send(`Available questions: \`${Object.keys(FAQ).join(',  ')}\``);
+            let keys = Object.keys(FAQ).sort(sort_collator.compare)
+            msg.channel.send(`Available questions: \`${keys.join(',  ')}\``);
 
         } else if (args[1]) {
             let key = args[1].toLowerCase()                
@@ -242,7 +244,7 @@ Bot.on('message', msg => {
         }
     }
 
-    if (msg.channel.name === 'model-showcase' && msg.attachments && msg.content && msg.content.substr(0, 3) === '[P]') {
+    if ((msg.channel.name === 'model-showcase' || msg.channel.name === 'blockbenchtober') && msg.attachments && msg.content && msg.content.substr(0, 3) === '[P]') {
 
         var attachment = msg.attachments.first();
         
