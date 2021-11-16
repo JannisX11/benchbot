@@ -227,6 +227,10 @@ Bot.on('message', msg => {
 		return;
     }
 
+    if (msg.author.username == 'grumm9690') {
+        msg.member.ban({reason: 'Spam'});
+    }
+
     if (msg.mentions.members && msg.mentions.members.first() && msg.mentions.members.first().user.id === Bot.user.id) {
         if (msg.content.toLowerCase().includes('ping')) {
             msg.channel.send('Pong')
