@@ -228,6 +228,7 @@ Bot.on('message', msg => {
     }
 
     if (msg.author.username == 'grumm9690') {
+        msg.delete();
         msg.member.ban({reason: 'Spam'});
     }
 
