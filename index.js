@@ -117,9 +117,13 @@ const Commands = {
             return;
         }
 
+        function sanitizeKey(string) {
+            return string.toLowerCase().replace(/[^a-z0-9._-]/g, '');
+        }
+
         if (msg.channel.name === 'bot-commands' && args[1] == 'set') {
 
-            var key = args[2];
+            var key = sanitizeKey(args[2]);
             var text = args.slice(3).join(' ');
             if (!text) {
                 delete FAQ[key];
@@ -132,7 +136,7 @@ const Commands = {
 
         } else if (msg.channel.name === 'bot-commands' && args[1] == 'remove') {
 
-            var key = args[2].toLowerCase();
+            var key = sanitizeKey(args[2]);
             if (FAQ[key]) {
                 msg.channel.send(`Removed the question '${key}'`);
                 delete FAQ[key];
@@ -143,8 +147,8 @@ const Commands = {
 
         } else if (msg.channel.name === 'bot-commands' && args[1] == 'rename') {
 
-            var old_name = args[2].toLowerCase();
-            var new_name = args[3].toLowerCase();
+            var old_name = sanitizeKey(args[2]);
+            var new_name = sanitizeKey(args[3]);
             if (FAQ[old_name] && new_name) {
                 FAQ[new_name] = FAQ[old_name];
                 delete FAQ[old_name];
@@ -158,9 +162,9 @@ const Commands = {
 
         } else if (msg.channel.name === 'bot-commands' && args[1] == 'raw') {
 
-            let key = args[2].toLowerCase()                
+            let key = sanitizeKey(args[2]);
             if (FAQ[key]) {
-                msg.channel.send('```\n'+FAQ[key]+'\n```');
+                msg.channel.send('```\n'+FAQ[key].replace(/´/g, "\\`")+'\n```');
             }
 
         } else if (args[1] == 'list' || args[1] == undefined) {
@@ -168,7 +172,7 @@ const Commands = {
             msg.channel.send(`Available questions: \`${keys.join(',  ')}\``);
 
         } else if (args[1]) {
-            let key = args[1].toLowerCase()                
+            let key = sanitizeKey(args[1]);
             if (FAQ[key]) {
                 msg.channel.send(`${FAQ[key]}`);
             } else {
@@ -203,7 +207,7 @@ Bot.on('message', msg => {
 
     if (msg.content.includes('@everyone') && !msg.member.roles.cache.find(role => role.name == 'Moderator')) {
         msg.delete();
-        msg.member.kick('Attempting to spam');
+        msg.member.kick('Pinged everyone');
         log_channel.send(`Deleted a message by ${msg.author} in #${msg.channel} attempting to ping everyone, and kicked user off the server.
 			\`\`\`
 			${msg.content.replace(/´/g, "'")}
@@ -218,7 +222,7 @@ Bot.on('message', msg => {
         !msg.content.includes('.discord.com/')
     ) {
         msg.delete();
-        msg.member.kick('Attempting to spam. Kicked by automatic spam detection. If you thing this was a mistake, please contact us.');
+        msg.member.kick('Automatic spam detection');
         log_channel.send(`Deleted a message by ${msg.author} in #${msg.channel} attempting to spam free nitro, and kicked user off the server.
 			\`\`\`
 			${msg.content.replace(/´/g, "'")}
