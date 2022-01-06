@@ -3,7 +3,7 @@ const {getChannel} = require('./util');
 module.exports = function DetectSpam(msg) {
     if (msg.content.includes('@everyone') && !msg.member.roles.cache.find(role => role.name == 'Moderator')) {
         msg.delete();
-        msg.member.kick('Attempting to spam');
+        msg.member.kick('Pinged everyone');
         getChannel('bot-log').send(`Deleted a message by ${msg.author} in #${msg.channel} attempting to ping everyone, and kicked user off the server.
 			\`\`\`
 			${msg.content.replace(/´/g, "'")}
@@ -18,7 +18,7 @@ module.exports = function DetectSpam(msg) {
         !msg.content.includes('.discord.com/')
     ) {
         msg.delete();
-        msg.member.kick('Attempting to spam. Kicked by automatic spam detection. If you thing this was a mistake, please contact us.');
+        msg.member.kick('Automatic spam detection');
         getChannel('bot-log').send(`Deleted a message by ${msg.author} in #${msg.channel} attempting to spam free nitro, and kicked user off the server.
 			\`\`\`
 			${msg.content.replace(/´/g, "'")}
