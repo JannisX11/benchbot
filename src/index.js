@@ -9,8 +9,8 @@ let ArchiveImage = require('./archive')
 let {handleMessageAwaiters} = require('./await_message')
 let package = require('./../package.json')
 
-//const dotenv = require('dotenv');
-//dotenv.config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 const Bot = new Discord.Client({
     intents: [
@@ -116,22 +116,23 @@ Bot.on('messageCreate', msg => {
             JobCommand(msg, args);
             return;
         }
-        
-        if (msg.channel.name == 'help-vanilla-java-block-item') {
-            msg.startThread({
-                name: `${msg.author.username}${msg.author.username.substr(-1) == 's' ? '' : 's'} Question`,
-                reason: 'Each question should be contained in a thread',
-                autoArchiveDuration: 60,
-            }).then(thread => {
-                thread.send('This thread was automatically created for answers to the question above!');
-            })
-        }
+    }
+    
+    if (msg.channel.name == 'help-vanilla-java-block-item') {
+        msg.startThread({
+            name: `${msg.author.username}${msg.author.username.substr(-1) == 's' ? '' : 's'} Question`,
+            reason: 'Each question should be contained in a thread',
+            autoArchiveDuration: 60,
+        }).then(thread => {
+            thread.send('This thread was automatically created for answers to the question above!');
+        })
     }
 })
 
 let relevant_reactions = ['relocate', 'delete'];
 
 Bot.on('messageReactionAdd', async (reaction, user) => {
+    if (user.bot) return;
     let name = reaction._emoji.name
     let {message} = reaction;
     if (!relevant_reactions.includes(name)) return;

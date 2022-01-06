@@ -32,7 +32,10 @@ module.exports = function ArchiveImage(msg) {
 			const reactionEmoji = pin.guild.emojis.cache.find(emoji => emoji.name === 'bblike');
 			pin.react(reactionEmoji);
 
-			msg.reply(`The model was pinned inside #model-archive!\n${pin.url}`);
+			msg.reply({
+				content: `The model was pinned inside #model-archive!\n${pin.url}`,
+				allowedMentions: {repliedUser: false},
+			});
 
 			setTimeout(() => {
 				if (!pin.deleted) {
