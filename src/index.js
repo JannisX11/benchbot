@@ -75,10 +75,48 @@ Bot.on('messageCreate', msg => {
         ArchiveImage(msg);
         return;
     }
+    
+    if (msg.channel.name == 'help-vanilla-java-block-item') {
+        if (msg.content.split(/\s+/).length <= 3) {
+            msg.reply({
+                content: `Please only use this channel for genuine modeling questions!\n${msg.content[0] == '!' ? 'Commands can be used in my DMs.\n' : ''}*(This message will self-destruct in 30 seconds)*`,
+                allowedMentions: {repliedUser: false}
+            }).then(reply => {
+                setTimeout(() => {
+                    reply.delete();
+                    msg.delete();
+                }, 30 * 1000)
+            });
+        } else {
+            msg.startThread({
+                name: `${msg.author.username}${msg.author.username.substr(-1) == 's' ? `'` : `'s`} Question`,
+                reason: 'Each question should be contained in a thread',
+                autoArchiveDuration: 60,
+            }).then(thread => {
+                thread.send('This thread was automatically created for answers to the question above!');
+            })
+        }
+    }
 
     if (msg.content && msg.content.substr(0, 1) == '!') {
         var args = msg.content.split(' ');
         var cmd = args[0].substr(1)
+
+        if (cmd == 'close' && msg.channel.type == 'GUILD_PUBLIC_THREAD') {
+            function react(permitted) {
+                if (permitted) {
+                    msg.channel.setArchived(true, 'Closed by author');
+                } else {
+                    msg.reply({content: 'You don\'t have permission to do this!', allowedMentions: {repliedUser: false}});
+                }
+            }
+            msg.channel.fetchStarterMessage().then(starter_message => {
+                react(starter_message.author == msg.author)
+            }).catch(err => {
+                react(msg.channel.ownerId == msg.author.id)
+            })
+            return;
+        }
 
         if (cmd == 'faq') {
             FAQCommand(msg, args)
@@ -116,16 +154,6 @@ Bot.on('messageCreate', msg => {
             JobCommand(msg, args);
             return;
         }
-    }
-    
-    if (msg.channel.name == 'help-vanilla-java-block-item') {
-        msg.startThread({
-            name: `${msg.author.username}${msg.author.username.substr(-1) == 's' ? '' : 's'} Question`,
-            reason: 'Each question should be contained in a thread',
-            autoArchiveDuration: 60,
-        }).then(thread => {
-            thread.send('This thread was automatically created for answers to the question above!');
-        })
     }
 })
 

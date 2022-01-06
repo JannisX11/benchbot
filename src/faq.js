@@ -5,27 +5,15 @@ const Discord = require('discord.js');
 const sort_collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
 const FAQ_timeouts = {}
 
-const userdata_path = './../benchbot_settings.json';
+const userdata_path = './../../benchbot_settings.json';
 
-var FAQ = {};
-fs.readFile(userdata_path, 'utf-8', function (err, data) {
-    if (err) return;
-    try {
-        data = JSON.parse(data);
-    } catch (err) {
-        return;
-    }
-    if (data && data.faq) {
-        FAQ = data.faq;
-    }
-    console.log('Successfully fetched settings')
-})
+let FAQ = require(userdata_path).faq;
 
 function saveSettings() {
     var root = {
         faq: FAQ
     }
-    fs.writeFile(userdata_path, JSON.stringify(root), function(err) {
+    fs.writeFile(path.join(__dirname, userdata_path), JSON.stringify(root), function(err) {
         if (err) throw err;
     });
 }
@@ -38,7 +26,10 @@ function saveSettings() {
  */
 module.exports = function FAQCommand(msg, args) {
 	if (msg.channel.type != 'DM' && msg.member && FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count >= 2) {
-		msg.channel.send('You can DM me to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and it gives you an easy way to read up on previous questions you asked me.')
+		msg.reply({
+			content: 'You can DM me to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and it gives you an easy way to read up on previous questions you asked me.',
+			allowedMentions: {repliedUser: false}
+		});
 		clearTimeout(FAQ_timeouts[msg.member.id].timeout);
 		delete FAQ_timeouts[msg.member.id];
 		return;
@@ -54,9 +45,9 @@ module.exports = function FAQCommand(msg, args) {
 		var text = args.slice(3).join(' ');
 		if (!text) {
 			delete FAQ[key];
-			msg.channel.send(`Removed the question '${key}'`);
+			msg.reply({content: `Removed the question '${key}'`, allowedMentions: {repliedUser: false}});
 		} else {
-			msg.channel.send(`${FAQ[key] ? 'Updated' : 'Added'} the question '${key}'`);
+			msg.reply({content: `${FAQ[key] ? 'Updated' : 'Added'} the question '${key}'`, allowedMentions: {repliedUser: false}});
 			FAQ[key] = text;
 		}
 		saveSettings();
@@ -65,11 +56,11 @@ module.exports = function FAQCommand(msg, args) {
 
 		var key = sanitizeKey(args[2]);
 		if (FAQ[key]) {
-			msg.channel.send(`Removed the question '${key}'`);
+			msg.reply({content: `Removed the question '${key}'`, allowedMentions: {repliedUser: false}});
 			delete FAQ[key];
 			saveSettings();
 		} else {
-			msg.channel.send(`Question not found`);
+			msg.reply({content: `Question not found`, allowedMentions: {repliedUser: false}});
 		}
 
 	} else if (msg.channel.name === 'bot-commands' && args[1] == 'rename') {
@@ -79,35 +70,36 @@ module.exports = function FAQCommand(msg, args) {
 		if (FAQ[old_name] && new_name) {
 			FAQ[new_name] = FAQ[old_name];
 			delete FAQ[old_name];
-			msg.channel.send(`Renamed the question '${old_name}' to '${new_name}'`);
+			msg.reply({content: `Renamed the question '${old_name}' to '${new_name}'`, allowedMentions: {repliedUser: false}});
 			saveSettings();
 		} else if (!FAQ[old_name]) {
-			msg.channel.send(`Question not found`);
+			msg.reply({content: `Question not found`, allowedMentions: {repliedUser: false}});
 		} else {
-			msg.channel.send(`Invalid number of arguments`);
+			msg.reply({content: `Invalid number of arguments`, allowedMentions: {repliedUser: false}});
 		}
 
 	} else if (msg.channel.name === 'bot-commands' && args[1] == 'raw') {
 
 		let key = sanitizeKey(args[2]);
 		if (FAQ[key]) {
-			msg.channel.send('```\n'+FAQ[key].replace(/´/g, "\\`")+'\n```');
+			msg.reply({content: '```\n'+FAQ[key].replace(/´/g, "\\`")+'\n```', allowedMentions: {repliedUser: false}});
 		}
 
 	} else if (args[1] == 'list' || args[1] == undefined) {
 		let keys = Object.keys(FAQ).sort(sort_collator.compare)
-		msg.channel.send(`Available questions: \`${keys.join(',  ')}\``);
+		msg.reply({content: `Available questions: \`${keys.join(',  ')}\``, allowedMentions: {repliedUser: false}});
 
 	} else if (args[1]) {
-		let key = sanitizeKey(args[1]);
+		args.shift();
+		let key = sanitizeKey(args.join('-'));
 		if (FAQ[key]) {
-			msg.channel.send(`${FAQ[key]}`);
+			msg.reply({content: `${FAQ[key]}`, allowedMentions: {repliedUser: false}});
 		} else {
 			var {bestMatch} = stringSimilarity.findBestMatch(key, Object.keys(FAQ));
 			if (bestMatch && bestMatch.rating > 0.5) {
-				msg.channel.send(`(Result for "${bestMatch.target}")\n${FAQ[bestMatch.target]}`);
+				msg.reply({content: `(Result for "${bestMatch.target}")\n${FAQ[bestMatch.target]}`, allowedMentions: {repliedUser: false}});
 			} else {
-				msg.channel.send(`Question '${key}' not found!`);
+				msg.reply({content: `Question '${key}' not found!`, allowedMentions: {repliedUser: false}});
 			}
 		}
 	}

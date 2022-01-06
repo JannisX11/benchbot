@@ -6,9 +6,9 @@ module.exports = function JobCommand(msg, args) {
 
 		if (msg.channel.type != 'DM') {
 			if (Math.random() < 0.05) {
-				msg.channel.send(`Slide into my DMs to create a new job post!`)
+				msg.reply({content: `Slide into my DMs to create a new job post!`, allowedMentions: {repliedUser: false}})
 			} else {
-				msg.channel.send(`${msg.author} You can only use this command in my DMs`)
+				msg.reply({content: `${msg.author} You can only use this command in my DMs`, allowedMentions: {repliedUser: false}})
 			}
 			return;
 		}
