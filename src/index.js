@@ -31,7 +31,7 @@ Bot.login(process.env.token).catch(err => {
 })
 
 Bot.on('ready', msg => {
-    console.log('Bot Online')
+    console.log(`Bot Online! Node ${process.version}, Benchbot v${package.version}`)
     setBot(Bot);
     log_channel = getChannel('bot-log')
     if (log_channel) {
