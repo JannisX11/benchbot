@@ -9,8 +9,8 @@ let ArchiveImage = require('./archive')
 let {handleMessageAwaiters} = require('./await_message')
 let package = require('./../package.json')
 
-const dotenv = require('dotenv');
-dotenv.config();
+//const dotenv = require('dotenv');
+//dotenv.config();
 
 const Bot = new Discord.Client({
     intents: [
@@ -26,7 +26,7 @@ const Bot = new Discord.Client({
 
 var log_channel;
 
-Bot.login(process.env.TOKEN).catch(err => {
+Bot.login(process.env.token).catch(err => {
     throw err;
 })
 
