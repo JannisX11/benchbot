@@ -159,7 +159,7 @@ module.exports = function JobCommand(msg, args) {
 			if (j.submit) {
 				let job_list_channel = getChannel(j.is_job_offer ? 'job-list' : 'artist-list');
 				job_list_channel.send(j.full_post).then(list_msg => {
-					msg.author.send(`The job post has been posted to the \`${target_channel}\` channel. You can remove it by reacting with the :delete: emoji.`);
+					msg.author.send(`The job post has been posted to the ${job_list_channel} channel. You can remove it by reacting with the :delete: emoji.`);
 					setTimeout(_ => {
 						msg.author.send(`Benchbot thanks you for using the job service and wishes you good luck with your offer!`);
 					}, 4332)
