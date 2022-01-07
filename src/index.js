@@ -93,7 +93,8 @@ Bot.on('messageCreate', msg => {
                 reason: 'Each question should be contained in a thread',
                 autoArchiveDuration: 60,
             }).then(thread => {
-                thread.send('This thread was automatically created for answers to the question above!');
+                thread.send(`This thread was automatically created for answers to the question above!
+                            When your question is answered, please close it by typing \`!close\`.`.replace(/\s{2,}/g, ''));
             })
         }
     }

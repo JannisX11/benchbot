@@ -1,4 +1,5 @@
 var fs = require('fs')
+let path = require('path');
 var stringSimilarity = require('string-similarity');
 const Discord = require('discord.js');
 
