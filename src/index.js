@@ -91,10 +91,9 @@ Bot.on('messageCreate', msg => {
             msg.startThread({
                 name: `${msg.author.username}${msg.author.username.substr(-1) == 's' ? `'` : `'s`} Question`,
                 reason: 'Each question should be contained in a thread',
-                autoArchiveDuration: 60,
+                autoArchiveDuration: 1440,
             }).then(thread => {
-                thread.send(`This thread was automatically created for answers to the question above!
-                            When your question is answered, please close it by typing \`!close\`.`.replace(/\s{2,}/g, ''));
+                thread.send(`This thread was automatically created for answers to the question above!\nWhen your question is answered, please close it by typing \`!close\`.`);
             })
         }
     }
@@ -111,10 +110,11 @@ Bot.on('messageCreate', msg => {
                     msg.reply({content: 'You don\'t have permission to do this!', allowedMentions: {repliedUser: false}});
                 }
             }
+            let allowed_roles = ['Moderator', 'VIP', 'Modeling Pro', 'Animating Pro'];
             msg.channel.fetchStarterMessage().then(starter_message => {
-                react(starter_message.author == msg.author)
+                react(starter_message.author == msg.author || msg.member.roles.cache.find(role => allowed_roles.includes(role.name)))
             }).catch(err => {
-                react(msg.channel.ownerId == msg.author.id)
+                react(msg.channel.ownerId == msg.author.id || msg.member.roles.cache.find(role => allowed_roles.includes(role.name)))
             })
             return;
         }

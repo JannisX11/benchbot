@@ -1,5 +1,6 @@
 var stringSimilarity = require('string-similarity');
 let {messageAwaiters} = require('./await_message');
+const { getChannel } = require('./util');
 
 module.exports = function JobCommand(msg, args) {
 	if (args[1] == 'new') {
@@ -156,8 +157,7 @@ module.exports = function JobCommand(msg, args) {
 			if (j.submit instanceof Rejection) return j.submit;
 
 			if (j.submit) {
-				let target_channel = j.is_job_offer ? 'job-list' : 'artist-list'
-				var job_list_channel = Bot.channels.cache.find(ch => ch.name === target_channel);
+				let job_list_channel = getChannel(j.is_job_offer ? 'job-list' : 'artist-list');
 				job_list_channel.send(j.full_post).then(list_msg => {
 					msg.author.send(`The job post has been posted to the \`${target_channel}\` channel. You can remove it by reacting with the :delete: emoji.`);
 					setTimeout(_ => {
