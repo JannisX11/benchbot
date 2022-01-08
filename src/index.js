@@ -76,7 +76,12 @@ Bot.on('messageCreate', msg => {
         return;
     }
     
-    if (msg.channel.name == 'help-vanilla-java-block-item') {
+    if (msg.channel.name.substr(0, 5) == 'help-') {
+        const channel_specific_note = {
+            'help-skin-figura-modelengine': 'Help channel for Minecraft Skins, and miscellaneous Minecraft model loaders such as Model-Engine (<https://github.com/Ticxo/Model-Engine-Wiki>), Figura (<https://github.com/Blancworks/Figura/wiki>), or Animated Java (<https://github.com/Animated-Java/animated-java>)',
+            'help-generic-format': 'Please only use this help channel if your model is in the "Generic Model" format!\n',
+            'help-installation': 'PYou can download Blockbench from <https://blockbench.net/downloads>\nIf you have trouble launching or updating Blockbench, try to download and run the installer.\n'
+        }
         if (msg.content.split(/\s+/).length <= 3) {
             msg.reply({
                 content: `Please only use this channel for genuine modeling questions!\n${msg.content[0] == '!' ? 'Commands can be used in my DMs.\n' : ''}*(This message will self-destruct in 30 seconds)*`,
@@ -88,12 +93,13 @@ Bot.on('messageCreate', msg => {
                 }, 30 * 1000)
             });
         } else {
+            let note = channel_specific_note[msg.channel.name] || '';
             msg.startThread({
-                name: `${msg.author.username}${msg.author.username.substr(-1) == 's' ? `'` : `'s`} Question`,
+                name: `${msg.author.username}${msg.author.username.substr(-1) == 's' ? '´' : '´s'} Question`,
                 reason: 'Each question should be contained in a thread',
                 autoArchiveDuration: 1440,
             }).then(thread => {
-                thread.send(`This thread was automatically created for answers to the question above!\nWhen your question is answered, please close it by typing \`!close\`.`);
+                thread.send(`This thread was automatically created for answers to the question above!\n${note}When your question is answered, please close it by typing \`!close\`.`);
             })
         }
     }
