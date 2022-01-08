@@ -76,7 +76,7 @@ Bot.on('messageCreate', msg => {
         return;
     }
     
-    if (msg.channel.name.substr(0, 5) == 'help-') {
+    if (msg.channel.type == 'GUILD_TEXT' && msg.channel.name.substr(0, 5) == 'help-') {
         const channel_specific_note = {
             'help-skin-figura-modelengine': 'Help channel for Minecraft Skins, and miscellaneous Minecraft model loaders such as Model-Engine (<https://github.com/Ticxo/Model-Engine-Wiki>), Figura (<https://github.com/Blancworks/Figura/wiki>), or Animated Java (<https://github.com/Animated-Java/animated-java>)',
             'help-generic-format': 'Please only use this help channel if your model is in the "Generic Model" format!\n',
