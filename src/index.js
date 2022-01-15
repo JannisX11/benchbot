@@ -109,6 +109,8 @@ Bot.on('messageCreate', msg => {
         var cmd = args[0].substr(1)
 
         if (cmd == 'close' && msg.channel.type == 'GUILD_PUBLIC_THREAD') {
+            msg.channel.setArchived(true, 'Closed by author');
+            /*
             function react(permitted) {
                 if (permitted) {
                     msg.channel.setArchived(true, 'Closed by author');
@@ -121,7 +123,7 @@ Bot.on('messageCreate', msg => {
                 react(starter_message.author == msg.author || msg.member.roles.cache.find(role => allowed_roles.includes(role.name)))
             }).catch(err => {
                 react(msg.channel.ownerId == msg.author.id || msg.member.roles.cache.find(role => allowed_roles.includes(role.name)))
-            })
+            })*/
             return;
         }
 
@@ -130,7 +132,7 @@ Bot.on('messageCreate', msg => {
             return;
         }
 
-        if (cmd == 'mobparts' && (msg.channel.name === 'help-optifine' || msg.channel.type == 'DM')) {
+        if (cmd == 'mobparts' && (msg.channel.name === 'benchbot-helps-out' || msg.channel.type == 'DM' || msg.channel.type == 'GUILD_PUBLIC_THREAD')) {
             MobpartsCommand(msg, args, Bot);
             return;
         }
