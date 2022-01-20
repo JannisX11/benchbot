@@ -12,7 +12,10 @@ module.exports = function DetectSpam(msg) {
 		return true;
     }
     else if (msg.content.match(/https?:\/\//i) &&
-        msg.content.match(/nitro/i) &&
+        (
+            msg.content.match(/nitro/i) ||
+            msg.content.match(/d.*\.gift\//i)
+        ) &&
         !msg.member.roles.cache.find(role => role.name == 'Moderator') &&
         !msg.content.includes('.epicgames.com/') &&
         !msg.content.includes('.discord.com/')
