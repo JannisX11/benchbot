@@ -28,7 +28,7 @@ function saveSettings() {
 module.exports = function FAQCommand(msg, args) {
 	if (msg.channel.type != 'DM' && msg.channel.name != 'benchbot-helps-out' && msg.member && FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count >= 2) {
 		msg.reply({
-			content: 'You can DM me or go to #benchbot-helps-out to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and if you use DMs it gives you an easy way to read up on previous questions you asked me.',
+			content: 'You can DM me or go to <#929369344473956352> to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and if you use DMs it gives you an easy way to read up on previous questions you asked me.',
 			allowedMentions: {repliedUser: false}
 		});
 		clearTimeout(FAQ_timeouts[msg.member.id].timeout);
@@ -83,7 +83,7 @@ module.exports = function FAQCommand(msg, args) {
 
 		let key = sanitizeKey(args[2]);
 		if (FAQ[key]) {
-			msg.reply({content: '```\n'+FAQ[key].replace(/´/g, "\\`")+'\n```', allowedMentions: {repliedUser: false}});
+			msg.reply({content: '```\n'+FAQ[key].replace(/[´`]/g, "\\`")+'\n```', allowedMentions: {repliedUser: false}});
 		}
 
 	} else if (args[1] == 'list' || args[1] == undefined) {
