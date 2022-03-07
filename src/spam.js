@@ -15,7 +15,7 @@ module.exports = function DetectSpam(msg) {
         !msg.content.includes('.discord.com/')
     ) {
         msg.delete();
-        msg.member.kick('Automatic spam detection');
+        msg.member.kick('Discord Nitro spam');
         getChannel('bot-log').send(`Deleted a message by ${msg.author} in #${msg.channel} attempting to spam free nitro, and kicked user off the server.
 			\`\`\`
 			${msg.content.replace(/[´`]/g, "'")}
@@ -35,7 +35,7 @@ module.exports = function DetectSpam(msg) {
 
     } else if (msg.content.match(/https?:\/\//i) &&
         msg.content.match(/game/i) &&
-        msg.content.match(/play test|test play/i) &&
+        msg.content.match(/play|test/i) &&
         !msg.content.includes('map') &&
         !hasRole(msg.member, 'Moderator')
     ) {
