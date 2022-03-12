@@ -36,7 +36,10 @@ module.exports = function DetectSpam(msg) {
     } else if (msg.content.match(/https?:\/\//i) &&
         msg.content.match(/game/i) &&
         msg.content.match(/play|test/i) &&
+        msg.content.length < 250 &&
         !msg.content.includes('map') &&
+        !msg.content.match(/minecraft/i) &&
+        !msg.content.match(/blockbench/i) &&
         !hasRole(msg.member, 'Moderator')
     ) {
         msg.delete();
