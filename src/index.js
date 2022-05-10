@@ -181,9 +181,8 @@ Bot.on('messageReactionAdd', async (reaction, user) => {
     let {message} = reaction;
     if (!relevant_reactions.includes(name)) return;
 
-    if (!message.author) {
-        await message.fetch();
-    }
+    await message.fetch();
+
     let bblike_count = message.reactions.cache.get(bblike_id)?.count;
 
     if (name == 'relocate' && !message.author.bot && reaction.count == 1) {
