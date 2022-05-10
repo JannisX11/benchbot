@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 
-let {getChannel, setBot} = require('./util')
+let {getChannel, setBot, hasRole, addRole} = require('./util')
 let FAQCommand = require('./faq')
 let MobpartsCommand = require('./mobparts')
 let JobCommand = require('./job')
@@ -8,6 +8,7 @@ let DetectSpam = require('./spam')
 let ArchiveImage = require('./archive')
 let {handleMessageAwaiters} = require('./await_message')
 let package = require('./../package.json')
+let db = require('./database')
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -44,7 +45,7 @@ function relocateMessage(user, channel, trigger_member) {
     channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
         Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
 
-    if (!trigger_member || !trigger_member.roles || !trigger_member.roles.cache.find(role => role.name == 'Moderator')) {
+    if (!trigger_member || !hasRole(trigger_member, 'Moderator')) {
         log_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)
     }
 }
@@ -166,7 +167,13 @@ Bot.on('messageCreate', msg => {
     }
 })
 
-let relevant_reactions = ['relocate', 'delete'];
+
+let relevant_reactions = ['relocate', 'delete', 'bblike'];
+
+let enthusiast_min_likes = 40;
+let enthusiast_min_posts = 4;
+let bblike_id = '850403856578773012';
+
 
 Bot.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
@@ -177,6 +184,7 @@ Bot.on('messageReactionAdd', async (reaction, user) => {
     if (!message.author) {
         await message.fetch();
     }
+    let bblike_count = message.reactions.cache.get(bblike_id)?.count;
 
     if (name == 'relocate' && !message.author.bot && reaction.count == 1) {
         relocateMessage(message.author, message.channel, message.guild.members.cache.get(user.id))
@@ -186,5 +194,28 @@ Bot.on('messageReactionAdd', async (reaction, user) => {
         if (message.mentions.has(user) || (message.embeds && message.embeds[0] && message.embeds[0].description.includes(user.toString()))) {
             message.delete().catch(console.error)
         }
+
+    } else if (name == 'bblike' && message.channel.name == 'model-archive' && bblike_count >= enthusiast_min_likes) {
+        let creator_mention = message.embeds[0].description.match(/<@\d{10,}>\s*$/);
+        let creator_id = creator_mention && creator_mention[0].replace(/[^\d]/g, '');
+        let creator = message.guild.members.cache.get(creator_id);
+
+        if (!db.get('popular_posts').get(creator_id).value()) {
+            db.get('popular_posts').get(creator_id).set([]);
+        }
+        let posts = db.get('popular_posts').get(creator_id).value();
+
+        if (!posts.includes(message.id)) {
+            db.get('popular_posts').get(creator_id).push(message.id).save();
+            if (posts.length >= enthusiast_min_posts && !hasRole(creator, 'Modeling Pro') && !hasRole(creator, 'Modeling Enthusiast')) {
+                addRole(creator, 'Modeling Enthusiast');
+                let channel = getChannel('model-showcase');
+                if (channel) {
+                    channel.send(`Congratulations ${creator}! The community seems to love your models! ${enthusiast_min_posts} of your posts have each individually received ${enthusiast_min_likes}+ likes!\n`+
+                        `I'm awarding you with the **Modeling Enthusiast** role!`);
+                }
+            }
+        }
+
     }
 })

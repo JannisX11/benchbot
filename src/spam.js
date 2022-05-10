@@ -1,8 +1,4 @@
-const {getChannel} = require('./util');
-
-function hasRole(member, role_name) {
-    return !!member.roles.cache.find(role => role.name == role_name);
-}
+const {getChannel, hasRole} = require('./util');
 
 module.exports = function DetectSpam(msg) {
     if (msg.content.match(/https?:\/\//i) &&
@@ -36,6 +32,7 @@ module.exports = function DetectSpam(msg) {
     } else if (msg.content.match(/https?:\/\//i) &&
         msg.content.match(/game/i) &&
         msg.content.match(/play|test/i) &&
+        msg.content.includes(' ') &&
         msg.content.length < 250 &&
         !msg.content.includes('map') &&
         !msg.content.match(/minecraft/i) &&

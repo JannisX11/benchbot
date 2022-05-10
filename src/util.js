@@ -23,6 +23,13 @@ function getChannel(name) {
 	let channel = Bot.channels.cache.find(ch => ch.name === name);
 	return channel;
 }
+function hasRole(member, role_name) {
+    return member && member.roles && !!member.roles.cache.find(role => role.name == role_name);
+}
+function addRole(member, role_name) {
+    let role = member && member.guild.roles.cache.find(role => role.name === role_name);
+    if (role) member.roles.add(role);
+}
 
 
-module.exports = {setBot, getChannel, getBot};
+module.exports = {setBot, getChannel, getBot, hasRole, addRole};

@@ -51,6 +51,9 @@ typings/
 # TypeScript cache
 *.tsbuildinfo
 
+# Database
+*.stormdb
+
 # Optional npm cache directory
 .npm
 
