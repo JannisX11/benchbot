@@ -198,7 +198,7 @@ Bot.on('messageReactionAdd', async (reaction, user) => {
     } else if (name == 'bblike' && message.channel.name == 'model-archive' && bblike_count >= enthusiast_min_likes) {
         let creator_mention = message.embeds[0].description.match(/<@\d{10,}>\s*$/);
         let creator_id = creator_mention && creator_mention[0].replace(/[^\d]/g, '');
-        let creator = message.guild.members.cache.get(creator_id);
+        let creator = await message.guild.members.fetch(creator_id);
 
         if (!db.get('popular_posts').get(creator_id).value()) {
             db.get('popular_posts').get(creator_id).set([]);
@@ -208,12 +208,15 @@ Bot.on('messageReactionAdd', async (reaction, user) => {
         if (!posts.includes(message.id)) {
             db.get('popular_posts').get(creator_id).push(message.id).save();
             if (posts.length >= enthusiast_min_posts && !hasRole(creator, 'Modeling Pro') && !hasRole(creator, 'Modeling Enthusiast')) {
-                addRole(creator, 'Modeling Enthusiast');
-                let channel = getChannel('model-showcase');
-                if (channel) {
-                    channel.send(`Congratulations ${creator}! The community seems to love your models! ${enthusiast_min_posts} of your posts have each individually received ${enthusiast_min_likes}+ likes!\n`+
-                        `I'm awarding you with the **Modeling Enthusiast** role!`);
+                if (creator) {
+                    addRole(creator, 'Modeling Enthusiast');
+                    let channel = getChannel('model-showcase');
+                    if (channel) {
+                        channel.send(`Congratulations ${creator}! The community seems to love your models! ${enthusiast_min_posts} of your posts have each individually received ${enthusiast_min_likes}+ likes!\n`+
+                            `I'm awarding you with the **Modeling Enthusiast** role!`);
+                    }
                 }
+                log_channel.send(`Modeling Enthusiast role assigned to ${creator} (${creator_id}) for ${enthusiast_min_posts} x ${enthusiast_min_likes} likes`);
             }
         }
 
