@@ -83,7 +83,12 @@ module.exports = function FAQCommand(msg, args) {
 
 		let key = sanitizeKey(args[2]);
 		if (FAQ[key]) {
-			msg.reply({content: '```\n'+FAQ[key].replace(/[´`]/g, "\\`")+'\n```', allowedMentions: {repliedUser: false}});
+			msg.reply({
+				allowedMentions: {repliedUser: false},
+				files: [
+					new Discord.MessageAttachment(Buffer.from(FAQ[key], 'utf8'), key+'.txt')
+				]
+			});
 		}
 
 	} else if (args[1] == 'list' || args[1] == undefined) {
