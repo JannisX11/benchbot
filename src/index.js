@@ -111,7 +111,7 @@ Bot.on('messageCreate', msg => {
 
         if (cmd == 'close' && msg.channel.type == 'GUILD_PUBLIC_THREAD') {
             msg.channel.setArchived(true, 'Closed by user');
-			pin.react('👍');
+			msg.react('👍');
             /*
             function react(permitted) {
                 if (permitted) {
