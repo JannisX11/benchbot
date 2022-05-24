@@ -80,7 +80,7 @@ Bot.on('messageCreate', msg => {
     if (msg.channel.type == 'GUILD_TEXT' && msg.channel.name.substr(0, 5) == 'help-') {
         const channel_specific_note = {
             'help-skin-figura-modelengine': 'This is the help channel for Minecraft Skins, and miscellaneous Minecraft model loaders such as Model-Engine (<https://github.com/Ticxo/Model-Engine-Wiki>), Figura (<https://github.com/Blancworks/Figura/wiki>), Blockbuster (<https://mchorse.github.io/blockbuster/>), or Animated Java (<https://github.com/Animated-Java/animated-java>).\nPlease specify which of these model loaders you are using, otherwise we cannot help you.\n',
-            'help-generic-format': 'Please only use this help channel if your model is in the "Generic Model" format! We won\'t answer Minecraft questions in this channel!\n',
+            'help-low-poly': 'Please only use this help channel if your model is in the "Generic Model" format! We won\'t answer Minecraft questions in this channel!\n',
             'help-installation': 'You can download Blockbench from <https://blockbench.net/downloads>\nIf you have trouble launching or updating Blockbench, try to download and run the installer.\n'
         }
         if (msg.content.split(/\s+/).length <= 3) {
@@ -110,8 +110,9 @@ Bot.on('messageCreate', msg => {
         var cmd = args[0].substr(1)
 
         if (cmd == 'close' && msg.channel.type == 'GUILD_PUBLIC_THREAD') {
-            msg.channel.setArchived(true, 'Closed by user');
-			msg.react('👍');
+            msg.channel.send('Channel closed ----------').then(() => {
+                msg.channel.setArchived(true, 'Closed by user');
+            })
             /*
             function react(permitted) {
                 if (permitted) {

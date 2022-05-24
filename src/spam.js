@@ -8,7 +8,8 @@ module.exports = function DetectSpam(msg) {
         ) &&
         !hasRole(msg.member, 'Moderator') &&
         !msg.content.includes('.epicgames.com/') &&
-        !msg.content.includes('.discord.com/')
+        !msg.content.includes('.discord.com/') &&
+        !msg.content.includes('.nitrocdn.com/')
     ) {
         msg.delete();
         msg.member.kick('Discord Nitro spam');
