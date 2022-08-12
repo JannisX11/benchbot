@@ -48,5 +48,17 @@ module.exports = function DetectSpam(msg) {
 			\`\`\`
         `.replace(/\t/g, ''));
 		return true;
+    } else if (msg.content.match(/https?:\/\/discord\.gg/i) &&
+        ['bb-themes', 'introductions'].includes(msg.channel.name) &&
+        !hasRole(msg.member, 'Moderator')
+    ) {
+        msg.delete();
+        msg.member.kick('Invite spam');
+        getChannel('bot-log').send(`Deleted a message by ${msg.author} in #${msg.channel} and kicked user off the server, for posting an invite that was likely spam.
+            \`\`\`
+            ${msg.content.replace(/[´`]/g, "'")}
+            \`\`\`
+        `.replace(/\t/g, ''));
+        return true;
     }
 }

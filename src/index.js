@@ -103,6 +103,7 @@ Bot.on('messageCreate', msg => {
                 thread.send(`This thread was automatically created for answers to the question above!\n${note}When your question is answered, please close it by typing \`!close\`.`);
             })
         }
+        return;
     }
 
     if (msg.content && msg.content.substr(0, 1) == '!') {
