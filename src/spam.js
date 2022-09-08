@@ -48,7 +48,7 @@ module.exports = function DetectSpam(msg) {
 			\`\`\`
         `.replace(/\t/g, ''));
 		return true;
-    } else if (msg.content.match(/https?:\/\/discord\.gg/i) &&
+    } else if (msg.content.match(/discord\.gg\/\w+/i) &&
         ['bb-themes', 'introductions'].includes(msg.channel.name) &&
         !hasRole(msg.member, 'Moderator')
     ) {
@@ -59,6 +59,15 @@ module.exports = function DetectSpam(msg) {
             ${msg.content.replace(/[´`]/g, "'")}
             \`\`\`
         `.replace(/\t/g, ''));
+        return true;
+    } else if (msg.content.match(/what.{2,6}snowstorm.{0,5}$/i) &&
+        msg.channel.name == 'snowstorm' &&
+        !hasRole(msg.member, 'Moderator')
+    ) {
+        msg.reply({
+			content: 'Read the channel description.',
+			allowedMentions: {repliedUser: true}
+		});
         return true;
     }
 }
