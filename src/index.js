@@ -77,7 +77,7 @@ Bot.on('messageCreate', msg => {
         return;
     }
     
-    if (msg.channel.type == 'GUILD_TEXT' && msg.channel.name.substr(0, 5) == 'help-') {
+    /*if (msg.channel.type == 'GUILD_TEXT' && msg.channel.name.substr(0, 5) == 'help-') {
         const channel_specific_note = {
             'help-skin-figura-modelengine': 'This is the help channel for Minecraft Skins, and miscellaneous Minecraft model loaders such as Model-Engine (<https://github.com/Ticxo/Model-Engine-Wiki>), Figura (<https://github.com/Blancworks/Figura/wiki>), Blockbuster (<https://mchorse.github.io/blockbuster/>), or Animated Java (<https://github.com/Animated-Java/animated-java>).\nPlease specify which of these model loaders you are using, otherwise we cannot help you.\n',
             'help-low-poly': 'Please only use this help channel if your model is in the "Generic Model" format! We won\'t answer Minecraft questions in this channel!\n',
@@ -104,7 +104,7 @@ Bot.on('messageCreate', msg => {
             })
         }
         return;
-    }
+    }*/
 
     if (msg.content && msg.content.substr(0, 1) == '!') {
         var args = msg.content.split(' ');
