@@ -53,10 +53,13 @@ module.exports = function JobCommand(msg, args) {
 				}
 			}
 
+			let channel_name;
+
 			j.is_job_offer = await askDMQuestion('Are you looking for __work__ or are you looking for an __artist__? Please reply with the underlined keyword.', 'artist');
 			if (j.is_job_offer instanceof Rejection) return j.is_job_offer;
 
 			if (j.is_job_offer) {
+				channel_name = 'job-list';
 				j.position = await askDMQuestion(`Are you offering a __single__ commission or a __long-term__ position? Or do you offer __both__?`, ['single', 'long-term', 'both']);
 				if (j.position instanceof Rejection) return j.position;
 
@@ -76,6 +79,7 @@ module.exports = function JobCommand(msg, args) {
 
 				j.paid = await askDMQuestion(`Are you able to pay the artist? (__yes__/__no__)`, 'yes');
 				if (j.paid instanceof Rejection) return j.paid;
+				if (!j.paid) channel_name = 'project-list';
 
 				j.description = await askDMQuestion(`Tell me a bit about the ${j.position ? 'position' : 'job'} you are offering`);
 				if (j.description instanceof Rejection) return j.description;
@@ -107,6 +111,7 @@ module.exports = function JobCommand(msg, args) {
 				].join('\n');
 
 			} else {
+				channel_name = 'artist-list';
 				j.position = await askDMQuestion(`Are you looking for a __single__ commission or a __long-term__ position? Or do you accept __both__?`, ['single', 'long-term', 'both']);
 				if (j.position instanceof Rejection) return j.position;
 
@@ -157,7 +162,7 @@ module.exports = function JobCommand(msg, args) {
 			if (j.submit instanceof Rejection) return j.submit;
 
 			if (j.submit) {
-				let job_list_channel = getChannel(j.is_job_offer ? 'job-list' : 'artist-list');
+				let job_list_channel = getChannel(channel_name);
 				job_list_channel.send(j.full_post).then(list_msg => {
 					msg.author.send(`The job post has been posted to the ${job_list_channel} channel. You can remove it by reacting with the :delete: emoji.`);
 					setTimeout(_ => {

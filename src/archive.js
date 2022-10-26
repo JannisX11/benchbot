@@ -7,6 +7,13 @@ const {getChannel} = require('./util');
  * @returns 
  */
 module.exports = function ArchiveImage(msg) {
+
+	if (msg.content.length < 6) {
+		msg.reply({
+			content: `The model name is too short. Please choose a proper name.`,
+		});
+		return;
+	}
 	
 	var attachment = msg.attachments.first();
         
