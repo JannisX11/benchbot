@@ -43,7 +43,9 @@ Bot.on('ready', msg => {
 
 function relocateMessage(user, channel, trigger_member) {
     channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
-        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>`.replace(/    /g, ''));
+    Find out how to use the help channels in #how-to-get-help.
+        Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>
+        `.replace(/    /g, ''));
 
     if (!trigger_member || !hasRole(trigger_member, 'Moderator')) {
         log_channel.send(`${trigger_member ? trigger_member.user : 'Unknown user'} used Relocate${user ? ` on a message by ${user}` : ''} in ${channel}.`)

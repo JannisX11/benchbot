@@ -63,8 +63,18 @@ module.exports = function JobCommand(msg, args) {
 				j.position = await askDMQuestion(`Are you offering a __single__ commission or a __long-term__ position? Or do you offer __both__?`, ['single', 'long-term', 'both']);
 				if (j.position instanceof Rejection) return j.position;
 
+				j.assettype = await askDMQuestion(`What type of assets do you need? (__texture__/__model__/__animation__/__build__/etc.)`);
+				if (j.assettype instanceof Rejection) return j.assettype;
+
+				j.paid = await askDMQuestion(`Are you able to pay the artist? (__yes__/__no__)`, 'yes');
+				if (j.paid instanceof Rejection) return j.paid;
+				if (!j.paid) channel_name = 'project-list';
+
 				j.company = await askDMQuestion(`Are you recruiting for a team/company? (__yes__/__no__)`, 'yes');
 				if (j.company instanceof Rejection) return j.company;
+
+				j.description = await askDMQuestion(`Tell me a bit about the ${j.position ? 'position' : 'job'} you are offering`);
+				if (j.description instanceof Rejection) return j.description;
 
 				if (j.company) {
 					j.about = await askDMQuestion(`Tell me a bit about your team or company\n`);
@@ -73,17 +83,6 @@ module.exports = function JobCommand(msg, args) {
 					j.about = await askDMQuestion(`Tell me a bit about yourself\nDetailed information can help make people interested in your project. Here are some questions for orientation:\n- What do you do, what do you specialize in?\n- How much experience do you have?\n- Have you worked on and finished any projects in the past?`);
 					if (j.about instanceof Rejection) return j.about;
 				}
-
-				j.assettype = await askDMQuestion(`What type of assets do you need? (__texture__/__model__/__animation__/__build__/etc.)`);
-				if (j.assettype instanceof Rejection) return j.assettype;
-
-				j.paid = await askDMQuestion(`Are you able to pay the artist? (__yes__/__no__)`, 'yes');
-				if (j.paid instanceof Rejection) return j.paid;
-				if (!j.paid) channel_name = 'project-list';
-
-				j.description = await askDMQuestion(`Tell me a bit about the ${j.position ? 'position' : 'job'} you are offering`);
-				if (j.description instanceof Rejection) return j.description;
-
 
 				// compile
 				j.pay_type = j.paid ? 'paid' : 'voluntary';
