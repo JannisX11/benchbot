@@ -43,7 +43,7 @@ Bot.on('ready', msg => {
 
 function relocateMessage(user, channel, trigger_member) {
     channel.send(`${user} Please relocate to the correct help channel. This keeps the server clean and helps us understand the context of your question.
-    Find out how to use the help channels in #how-to-get-help.
+    Find out how to use the help channels in <#869569008289058926>.
         Not sure which format or help channel to use? Check out the Quickstart Wizard! <https://blockbench.net/quickstart>
         `.replace(/    /g, ''));
 
