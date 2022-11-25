@@ -10,7 +10,7 @@ let stringSimilarity = require('string-similarity');
 module.exports = async function MobpartsCommand(message, args, Bot) {
 	args.shift();
 	const data = await new Promise((resolve, reject) => {
-		request(`https://www.wynem.com/bot_assets/json/cem_template_models.json`, async (err, res, body) => {
+		request(`https://wynem.com/assets/json/cem_template_models.json`, async (err, res, body) => {
 			if (err) {
 				reject(err);
 				return;
@@ -84,16 +84,16 @@ module.exports = async function MobpartsCommand(message, args, Bot) {
 	const entityName = entityData.display_name ?? (entityData.name ?? entityData).replace(/_/g, " ").toTitleCase()
 	embed.setTitle(entityName)
 	embed.setDescription(`\`${bones.join("` `")}\``)
-	embed.setThumbnail(`https://www.wynem.com/bot_assets/images/minecraft/renders/${args[0]}.png`)
+	embed.setThumbnail(`https://wynem.com/assets/images/minecraft/renders/${args[0]}.webp`)
 	const row = new Discord.MessageActionRow()
 		.addComponents(
 			new Discord.MessageButton()
 				.setLabel("View online")
-				.setURL(`https://www.wynem.com/?cem=${args[0]}`)
+				.setURL(`https://beta.wynem.com/cem/?entity=${args[0]}`)
 				.setStyle("LINK"),
 			new Discord.MessageButton()
 				.setLabel("Download template")
-				.setURL(`https://www.wynem.com/?cem=${args[0]}&download`)
+				.setURL(`https://beta.wynem.com/cem/?entity=${args[0]}&download`)
 				.setStyle("LINK")
 		)
 	return message.reply({
