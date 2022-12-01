@@ -48,8 +48,13 @@ module.exports = function DetectSpam(msg) {
 			\`\`\`
         `.replace(/\t/g, ''));
 		return true;
+
+
     } else if (msg.content.match(/discord\.gg\/\w+/i) &&
-        ['bb-themes', 'introductions'].includes(msg.channel.name) &&
+        (
+            ['bb-themes', 'introductions'].includes(msg.channel.name) ||
+            msg.content.match(/discord\.gg\/.*(nudes|family|sex|tiktok|nsfw|18)/i)
+        ) &&
         !hasRole(msg.member, 'Moderator')
     ) {
         msg.delete();
@@ -60,6 +65,8 @@ module.exports = function DetectSpam(msg) {
             \`\`\`
         `.replace(/\t/g, ''));
         return true;
+
+
     } else if (msg.content.match(/what.{2,6}snowstorm.{0,5}$/i) &&
         msg.channel.name == 'snowstorm' &&
         !hasRole(msg.member, 'Moderator')
