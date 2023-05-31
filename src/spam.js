@@ -3,7 +3,7 @@ const {getChannel, hasRole} = require('./util');
 module.exports = function DetectSpam(msg) {
     if (msg.content.match(/https?:\/\//i) &&
         (
-            msg.content.match(/nitro/i) ||
+            msg.content.match(/ni(t|Т)r(o|0)/i) ||
             msg.content.match(/d.*\.gift\//i)
         ) &&
         !hasRole(msg.member, 'Moderator') &&
@@ -60,6 +60,19 @@ module.exports = function DetectSpam(msg) {
         msg.delete();
         msg.member.kick('Invite spam');
         getChannel('bot-log').send(`Deleted a message by ${msg.author} in #${msg.channel} and kicked user off the server, for posting an invite that was likely spam.
+            \`\`\`
+            ${msg.content.replace(/[´`]/g, "'")}
+            \`\`\`
+        `.replace(/\t/g, ''));
+        return true;
+
+
+    } else if (msg.content.match(/\/\/t\.me\/\w+/i) &&
+        !hasRole(msg.member, 'Moderator')
+    ) {
+        msg.delete();
+        msg.member.kick('Suspicious link');
+        getChannel('bot-log').send(`Deleted a message by ${msg.author} in #${msg.channel} and kicked user off the server, for posting a suspicious Telegram link.
             \`\`\`
             ${msg.content.replace(/[´`]/g, "'")}
             \`\`\`
