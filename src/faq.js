@@ -26,7 +26,7 @@ function saveSettings() {
  * @param {array} args 
  */
 module.exports = function FAQCommand(msg, args) {
-	if (msg.channel.type != 'DM' && msg.channel.name != 'benchbot-helps-out' && msg.member && FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count >= 2) {
+	if (msg.channel.type != 'DM' && msg.channel.name != 'benchbot-helps-out' && !msg.channel.name.startsWith('help-') && msg.member && FAQ_timeouts[msg.member.id] && FAQ_timeouts[msg.member.id].count >= 2) {
 		msg.reply({
 			content: 'You can DM me or go to <#929369344473956352> to use more commands instead of using them here in the chat.\nThis helps to prevent filling random channels with bot messages and if you use DMs it gives you an easy way to read up on previous questions you asked me.',
 			allowedMentions: {repliedUser: false}
@@ -109,7 +109,7 @@ module.exports = function FAQCommand(msg, args) {
 			}
 		}
 	}
-	if (msg.channel.type != 'DM' && msg.channel.name != 'bot-commands' && msg.channel.name != 'benchbot-helps-out' && msg.member && !msg.member.roles.cache.find(role => role.name == 'Moderator')) {
+	if (msg.channel.type != 'DM' && msg.channel.name != 'bot-commands' && msg.channel.name != 'benchbot-helps-out' && !msg.channel.name.startsWith('help-') && msg.member && !msg.member.roles.cache.find(role => role.name == 'Moderator')) {
 		if (FAQ_timeouts[msg.member.id]) {
 			FAQ_timeouts[msg.member.id].count++;
 		} else {

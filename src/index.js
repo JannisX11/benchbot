@@ -173,6 +173,13 @@ Bot.on('messageCreate', msg => {
 })
 
 
+Bot.on('threadCreate', (thread) => {
+    if (thread.parent && thread.parent.name.startsWith('help-') && thread.messageCount <= 1) {
+        thread.send('Welcome to the help forum! Once your question has been resolved, please mark the post as closed by typing !close.')
+    }
+})
+
+
 let relevant_reactions = ['relocate', 'delete', 'bblike'];
 
 let enthusiast_min_likes = 40;
