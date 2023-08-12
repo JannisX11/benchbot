@@ -89,11 +89,11 @@ module.exports = async function MobpartsCommand(message, args, Bot) {
 		.addComponents(
 			new Discord.MessageButton()
 				.setLabel("View online")
-				.setURL(`https://beta.wynem.com/cem/?entity=${args[0]}`)
+				.setURL(`https://wynem.com/cem/?entity=${args[0]}`)
 				.setStyle("LINK"),
 			new Discord.MessageButton()
 				.setLabel("Download template")
-				.setURL(`https://beta.wynem.com/cem/?entity=${args[0]}&download`)
+				.setURL(`https://wynem.com/cem/?entity=${args[0]}&download`)
 				.setStyle("LINK")
 		)
 	return message.reply({
