@@ -1,0 +1,1 @@
+registerAutocomplete(scriptName, (interaction, text) => interaction.respond(filteredSort(db.faq.categories(), text, 25).map(e => ({ name: e, value: e }))))

@@ -1,0 +1,1 @@
+registerFunction(scriptName, val => val !== null && val !== undefined)

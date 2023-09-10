@@ -1,0 +1,142 @@
+{
+  "prefix": "!",
+  "colour": "#3CB4FA",
+  "owners": [
+    "137288731731296257",
+    "519179484340027392"
+  ],
+  "guild": "314078526104141834",
+  "channels": {
+    "errors": "1149822910245113888",
+    "log": "872151499302645830",
+    "archive": "549330554428981278",
+    "showcase": "316623115750866944",
+    "introductions": "821490783819530280",
+    "snowstorm": "572152206841872431",
+    "commands": "929369344473956352",
+    "help": {
+      "how": "869569008289058926",
+      "pinned": {
+        "lowpoly": "1021015331910713395",
+        "minecraft-java": "1029373817119838218",
+        "minecraft-bedrock": "1029468016594911232"
+      }
+    },
+    "job": {
+      "job": "627229136842129419",
+      "artist": "802292924477210674",
+      "project": "1034932056548978818"
+    },
+    "infiniteCommands": [
+      "1030408558631727125"
+    ]
+  },
+  "roles": {
+    "modelingPro": "530820449144406016",
+    "modelingEnthusiast": "967546353641197639",
+    "moderator": "314483155153321984",
+    "vip": "332859261631594506"
+  },
+  "emotes": {
+    "like": "850403856578773012",
+    "delete": "687409678137032744",
+    "relocate": "687411998681858071"
+  },
+  "likes": {
+    "reactions": 40,
+    "posts": 4
+  },
+  "relocate": [
+    {
+      "id": "1021001016197525565",
+      "keywords": [
+        "poly",
+        "mesh",
+        "generic",
+        "blender",
+        "unity",
+        "unreal",
+        "sketchfab",
+        "obj",
+        "gltf"
+      ]
+    },
+    {
+      "id": "1021001177263001701",
+      "keywords": [
+        "java",
+        "minecraft",
+        "geckolib",
+        "optifine",
+        "cem",
+        "cit",
+        "mcreator",
+        "modded",
+        "figura",
+        "shader",
+        "font",
+        "animated java",
+        "aj",
+        "mod",
+        "plugin",
+        "gui",
+        "hud",
+        "sounds"
+      ]
+    },
+    {
+      "id": "1021001264311574640",
+      "keywords": [
+        "bedrock",
+        "minecraft",
+        "wizard",
+        "snowstorm",
+        "attachable",
+        "gui",
+        "hud",
+        "sounds"
+      ]
+    }
+  ],
+  "tags": {
+    "1021001016197525565": [
+      [
+        "Generic Format",
+        "Blender",
+        "Sketchfab",
+        "Unity / Unreal"
+      ]
+    ],
+    "1021001177263001701": [
+      [
+        "2D Skin",
+        "OptiFine Entity",
+        "Modded"
+      ],
+      [
+        "Block/Item Model",
+        "OptiFine CIT",
+        "Modded"
+      ],
+      [
+        "Modded",
+        "MCreator",
+        "GeckoLib"
+      ],
+      [
+        "Server plugin model",
+        "AJ Plugin"
+      ],
+      [
+        "Block/Item Model",
+        "Shaders"
+      ],
+      [
+        "Modded",
+        "Block/Item Model",
+        "MCreator"
+      ]
+    ],
+    "1021001264311574640": []
+  }
+}
