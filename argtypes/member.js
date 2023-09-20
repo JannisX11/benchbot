@@ -16,7 +16,7 @@ registerArgType(scriptName, async (item, data) => {
         if (!data.noText) try {
           const parts = item.match(/(.+?)(#\d{4}$)?$/)
           const members = await data.message.guild.members.search({ query: parts[1] })
-          const found = members.find(member => member.user.username.toLowerCase() === item || member.user.globalName.toLowerCase() === item || member.nickname?.toLowerCase() === item || member.user.username + "#" + member.user.discriminator === item)
+          const found = members.find(member => member.user.username.toLowerCase() === item || member.user.globalName.toLowerCase() === item || member.nickname?.toLowerCase() === item)
           if (found) member = found
         } catch {}
       }
