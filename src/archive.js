@@ -16,8 +16,10 @@ module.exports = function ArchiveImage(msg) {
 	}
 	
 	var attachment = msg.attachments.first();
-        
-	if (attachment && ['png', 'jpg', 'jpeg', 'gif'].includes(attachment.url.split('.').pop().toLowerCase())) {
+	if (!attachment) return;
+
+	let extension = attachment.url.split('.').pop().split('?')[0];
+	if (['png', 'jpg', 'jpeg', 'gif'].includes(extension.toLowerCase())) {
 	
 		var archive_channel = getChannel('model-archive');
 		if (!archive_channel) return;
