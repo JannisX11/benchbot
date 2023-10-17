@@ -137,6 +137,19 @@
         "MCreator"
       ]
     ],
-    "1021001264311574640": []
+    "1021001264311574640": [
+      [
+        "Bedrock Entity",
+        "Entity Wizard",
+        "Animation",
+        "Entity Config",
+        "Particles"
+      ],
+      [
+        "Item Model",
+        "Animation",
+        "Particles"
+      ]
+    ]
   }
 }
