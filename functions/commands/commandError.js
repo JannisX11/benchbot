@@ -12,7 +12,7 @@ registerFunction(scriptName, async (message, error) => {
     if (message.command.type === "prefix") {
       if (message.guild) title = `Prefix command error in \`${message.guild.name}\` \`#${message.channel.name}\``
       else title = `Prefix command error in DMs with \`${message.author.username}\``
-      await sendMessage(await getChannel(client.botChannels.errors), {
+      await sendMessage(await getChannel(config.channels.errors), {
         title,
         fields: [
           ["Command", `\`\`${client.prefix}${message.command.name}\`\``, false],
@@ -25,7 +25,7 @@ registerFunction(scriptName, async (message, error) => {
     } else {
       if (message.member) title = `Application command command error in \`${message.guild.name}\` \`#${message.channel.name}\``
       else title = `Application command command error in DMs with \`${message.user.tag}\``
-      await sendMessage(await getChannel(client.botChannels.errors), {
+      await sendMessage(await getChannel(config.channels.errors), {
         title,
         fields: [
           ["Command", getFullCommand(message).toString().limit(1024), false],
