@@ -29,7 +29,7 @@ registerFunction(scriptName, async (message, error) => {
         title,
         fields: [
           ["Command", getFullCommand(message).toString().limit(1024), false],
-          ["Run by", `\`${message.user.username}#${message.user.discriminator}\``],
+          ["Run by", `\`${message.user.username}\``],
           ["Error message", `\`${error.message.limit(1000)}\``, false],
           ["Stack", `\`\`\`${error.stack.toString().limit(1000)}\`\`\``, false]
         ],
