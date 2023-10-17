@@ -3,5 +3,10 @@
 *.db-wal
 *.sublime-workspace
 *.sublime-project
+*.stormdb
+.env
+.env.test
+testing.js
+
 /node_modules/
 /private/
