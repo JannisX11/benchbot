@@ -12,6 +12,7 @@ registerPrefixCommand(scriptName, prefixPath, {
   aliases: ["submit", "artchive", "pinmodel", "[p]"],
   arguments: ["*title"],
   async execute(message, args) {
+    args[0] = args[0].replace(/^\[p\]\s?/i, "")
     if (!args[1]) {
       [args[0], args[1]] = args[0].split(/(?<=^[^\n]*)\n/)
     }
