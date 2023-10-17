@@ -1,5 +1,6 @@
 registerFunction(scriptName, async (message, author, channel) => {
-  const suggestions = config.relocate.filter(e => e.keywords.some(k => message.content?.includes(k)))
+  const content = message.content?.toLowerCase()
+  const suggestions = config.relocate.filter(e => e.keywords.some(k => content?.includes(k)))
   const relocate = await sendMessage(message.user ? channel : message, {
     message: message.user ? `${message} please relocate!` : undefined,
     title: "Please relocate to the correct help channel",
