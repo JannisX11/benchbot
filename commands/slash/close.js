@@ -1,0 +1,1 @@
+registerSlashCommand(scriptName, slashPath, {})
