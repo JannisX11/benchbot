@@ -6,6 +6,7 @@ import { createRequire } from "node:module"
 import child_process from "child_process"
 import Database from "better-sqlite3"
 import Discord from "discord.js"
+import fetch from "node-fetch"
 import path from "node:path"
 import vm from "node:vm"
 import fs from "node:fs"
@@ -28,6 +29,7 @@ config.save = () => {
   return "Saved!"
 }
 
+globalThis.fetch = fetch
 globalThis.config = config
 globalThis.testMode = process.argv.includes("-dev")
 globalThis.database = new Database("database.db")
