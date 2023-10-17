@@ -19,7 +19,6 @@ const scope = {
   child_process,
   Discord,
   tokens,
-  fetch,
   fs
 }
 
@@ -30,6 +29,7 @@ config.save = () => {
   return "Saved!"
 }
 
+globalThis.fetch = fetch
 globalThis.config = config
 globalThis.testMode = process.argv.includes("-dev")
 globalThis.database = new Database("database.db")
