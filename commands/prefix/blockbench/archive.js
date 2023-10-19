@@ -35,7 +35,7 @@ registerPrefixCommand(scriptName, prefixPath, {
       url,
       description: `${args[1] ? `${args[1]}\n\n` : ""}**By ${message.author}**`,
       image: images.shift()[1].url,
-      thumbnail: avatar(message.member)
+      thumbnail: avatar(message.member, 48)
     }]
     for (const image of images) embeds.push({
       url,
