@@ -16,7 +16,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     if (!args[1]) {
       [args[0], args[1]] = args[0].split(/(?<=^[^\n]*)\n/)
     }
-    const images = Array.from(message.attachments.filter(e => e.contentType.startsWith("image/"))).slice(0, 4)
+    const images = Array.from(message.attachments.filter(e => e.contentType?.startsWith("image/"))).slice(0, 4)
     if (!images.length) return sendError(message, {
       title: "Missing images",
       description: "Please provide at least one image"
@@ -35,7 +35,7 @@ registerPrefixCommand(scriptName, prefixPath, {
       url,
       description: `${args[1] ? `${args[1]}\n\n` : ""}**By ${message.author}**`,
       image: images.shift()[1].url,
-      thumbnail: avatar(message.member)
+      thumbnail: avatar(message.member, 48)
     }]
     for (const image of images) embeds.push({
       url,
