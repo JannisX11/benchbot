@@ -14,11 +14,11 @@ registerFunction(scriptName, async (interaction, modal, fields, args) => {
         if (fields[row.text.id]) {
           if (row.text.type) {
             if (row.text.type === "url") {
-              const url = await argTypes.url(fields[row.text.id], { errorless: true })
+              const url = await argTypes.url(fields[row.text.id])
               if (!url) {
                 error = true
-                errorFields.push([`URL not found for \`${row.text.label}\``, `The URL \`${fields[row.text.id]}\` could not be found`])
-              }
+                errorFields.push([`Invalid URL for \`${row.text.label}\``, `The URL \`${fields[row.text.id]}\` was not a valid URL`])
+              } else fields[row.text.id] = url
             } else if (row.text.type === "boolean") {
               const boolean = await argTypes.boolean(fields[row.text.id])
               if (boolean === undefined) {
