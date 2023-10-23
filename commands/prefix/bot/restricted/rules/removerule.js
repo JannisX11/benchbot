@@ -34,7 +34,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     db.guilds.rules.remove(message.guildId, args[0] - 1)
     sendMessage(message, {
       title: "Rule removed",
-      description: `Rule \`${args[0]}\` has been removed`,
+      description: `Rule \`${args[0]}\` has been removed from the server`,
       processing: check[1],
       components: []
     })
