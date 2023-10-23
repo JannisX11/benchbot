@@ -1,6 +1,7 @@
 registerLoadIn(scriptName, {
   load() {
     client.icons = Object.fromEntries([
+      "discord",
       "error",
       "faq",
       "help",

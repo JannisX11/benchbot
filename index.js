@@ -49,11 +49,17 @@ globalThis.getFiles = async function*(dir) {
   }
 }
 
+const titleReplacements = {
+  "U R L": "URL"
+}
+
+const titlePattern = new RegExp(`\\b(${Object.keys(titleReplacements).join("|")})\\b`, "gi")
+
 String.prototype.toTitleCase = function(c, n) {
   let t
   if (c) t = this.replace(/\s/g, "").replace(n ? /([A-Z])/g : /([A-Z0-9])/g, " $1").replace(/[_-]/g, " ")
   else t = this
-  return t.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).trim()
+  return t.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).trim().replace(titlePattern, (a, b) => titleReplacements[b])
 }
 
 String.prototype.limit = function(l = 128) {
