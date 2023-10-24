@@ -3,6 +3,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     description: "Rename an FAQ entry.",
     arguments: "[oldCategory] [oldId] [newCategory] [newId]"
   },
+  guildOnly: true,
   permissions: ["ManageMessages"],
   aliases: ["faqrename"],
   arguments: ["oldCategory", "oldId", "newCategory", "newId"],
