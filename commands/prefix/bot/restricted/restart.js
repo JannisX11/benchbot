@@ -8,7 +8,7 @@ registerPrefixCommand(scriptName, prefixPath, {
       author: ["Restarting bot...", client.icons.pinging]
     })
     client.destroy()
-    fs.writeFileSync(`./json/restart.json`, JSON.stringify([msg.channelId, msg.id]), "utf8")
+    fs.writeFileSync(`./restart.json`, JSON.stringify([msg.channelId, msg.id]), "utf8")
     process.exit()
   }
 })
