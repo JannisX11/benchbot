@@ -1,5 +1,5 @@
 {
-  "description": "Manage the server rules.",
+  "description": "Manage the server invites.",
   "permissions": ["ManageGuild"],
   "guildOnly": true
 }

@@ -3,6 +3,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     description: "Remove an FAQ entry.",
     arguments: "[category] [id]"
   },
+  guildOnly: true,
   permissions: ["ManageMessages"],
   aliases: ["faqremove", "deletefaq", "faqdelete"],
   arguments: ["category", "id"],

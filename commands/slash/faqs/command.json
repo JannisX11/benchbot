@@ -1,4 +1,5 @@
 {
   "description": "Commands for managing FAQs",
-  "permissions": ["ManageMessages"]
+  "permissions": ["ManageMessages"],
+  "guildOnly": true
 }

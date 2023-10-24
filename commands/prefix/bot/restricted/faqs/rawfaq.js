@@ -6,6 +6,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     ],
     arguments: "[category] [id]"
   },
+  guildOnly: true,
   permissions: ["ManageMessages"],
   aliases: ["faqraw"],
   arguments: ["category", "id"],

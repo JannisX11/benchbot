@@ -9,7 +9,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     const count = db.guilds.rules.count(message.guildId)
     if (count >= 15) return sendError(message, {
       title: "Maximum number of rules",
-      description: "The maximum number of rules that you can have are `15`"
+      description: "The maximum number of rules that you can have is `15`"
     })
     let modalMessage
     if (!message.command.application) {

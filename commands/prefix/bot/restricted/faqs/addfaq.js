@@ -2,6 +2,7 @@ registerPrefixCommand(scriptName, prefixPath, {
   help: {
     description: "Add or update an FAQ entry."
   },
+  guildOnly: true,
   permissions: ["ManageMessages"],
   aliases: ["faqadd", "setfaq", "faqset"],
   async execute(message) {
