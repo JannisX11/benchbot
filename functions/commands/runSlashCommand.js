@@ -14,6 +14,7 @@ registerFunction(scriptName, async interaction => {
   Object.defineProperty(interaction, "command", {
     get: () => command
   })
+  interaction.aliasUsed = command.command
   if (await permCheck(interaction, command) !== true) return
   if (!await cooldownCheck(interaction, command)) return
   if (!interaction.member) interaction.member = createMember(interaction.user)
