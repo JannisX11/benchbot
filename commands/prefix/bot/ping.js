@@ -8,14 +8,14 @@ registerPrefixCommand(scriptName, prefixPath, {
     const ping = await sendMessage(message, {
       author: ["Pinging...", client.icons.pinging],
       fields: [
-        ["API latency", `${client.ws.ping} ms`]
+        ["API latency", client.ws.ping === -1 ? "Not calculated yet" : `${Math.round(client.ws.ping)} ms`]
       ],
       fetch: true
     })
     editMessage(ping, {
       author: ["Pong", client.icons.ping],
       fields: [
-        ["API latency", `${client.ws.ping} ms`],
+        ["API latency", client.ws.ping === -1 ? "Not calculated yet" : `${Math.round(client.ws.ping)} ms`],
         ["Bot latency", `${Date.now() - before} ms`]
       ]
     }).catch(() => {})
