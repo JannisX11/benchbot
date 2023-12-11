@@ -14,6 +14,7 @@ registerArgType(scriptName, async (item, data) => {
       member = await getMember(data.message.guild, id)
       if (!member) {
         if (!data.noText) try {
+          if (item.startsWith("@")) item = item.slice(1)
           const parts = item.match(/(.+?)(#\d{4}$)?$/)
           const members = await data.message.guild.members.search({ query: parts[1] })
           const found = members.find(member => member.user.username.toLowerCase() === item || member.user.globalName.toLowerCase() === item || member.nickname?.toLowerCase() === item)

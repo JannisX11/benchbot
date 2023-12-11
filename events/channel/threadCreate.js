@@ -4,7 +4,8 @@ registerEvent(scriptName, async thread => {
     const pin = config.channels.help.pinned[thread.parent.name.slice(5)]
     const embeds = [{
       title: `Welcome to the help forum!`,
-      description: `${pin ? `Please make sure to read <#${pin}> as it may answer your question!\n\n` : ""}Once your question has been resolved, please mark the post as closed by using the </${close.tree.join(" ")}:${await getCommand(close, { guild: testMode ? thread.guild : undefined, id: true })}> command.`
+      description: `${pin ? `Please make sure to read <#${pin}> as it may answer your question!\n\n` : ""}Once your question has been resolved, please mark the post as closed by using the </${close.tree.join(" ")}:${await getCommand(close, { guild: testMode ? thread.guild : undefined, id: true })}> command.`,
+      colour: client.colours.success
     }]
     if (config.tags[thread.parentId] && !checkTags(thread.appliedTags.filter(e => e.name !== "Moderator").map(e => thread.parent.availableTags.find(t => t.id === e).name), config.tags[thread.parentId])) {
       embeds.unshift({
@@ -13,7 +14,7 @@ registerEvent(scriptName, async thread => {
         colour: client.colours.error
       })
     }
-    setTimeout(() => sendMessage(thread, { embeds }), 2000)
+    setTimeout(() => sendMessage(thread, { embeds }), 3000)
   }
 })
 
