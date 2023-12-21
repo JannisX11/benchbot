@@ -57,7 +57,8 @@ registerPrefixCommand(scriptName, prefixPath, {
         return true
       }, {
         authorOnly: true,
-        leave: true
+        leave: true,
+        timeout: 600
       }, interaction => true)) return
       return true
     }
