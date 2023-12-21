@@ -57,7 +57,7 @@ registerFunction(scriptName, async (message, modalMessage, modal, func, args, fu
         return
       }
     }, {
-      timeout: 300,
+      timeout: args.timeout ?? 300,
       timeoutMessage: "The command timed out...",
       leave: args.leave
     })
