@@ -105,7 +105,10 @@ registerFunction(scriptName, {
     client.on(name, func)
   },
   async registerLoadIn(name, loadIn) {
+    let loaded
+    loadIn.loaded = new Promise(fulfil => loaded = fulfil)
+    loadedLoadIns.set(name, loadIn)
     await loadIn.load()
-    loadedLoadIns.set(name, loadIn.unload) 
+    loaded()
   }
 })

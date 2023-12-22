@@ -189,7 +189,7 @@ async function reloadAll() {
     delete globalThis[script]
   }
   for (const [k, v] of vmContextObject.loadedEvents) client.off(k, v)
-  for (const [k, v] of vmContextObject.loadedLoadIns) await v?.()
+  for (const [k, v] of vmContextObject.loadedLoadIns) await v.unload?.()
   client.restrictedCommands = []
   client.commandTree = {}
   client.categories = {}
@@ -206,6 +206,7 @@ async function reloadAll() {
   vmContextObject.loadedLoadIns = new Map
   for await (const f of getFiles("./functions")) await loadScript(f)
   for await (const f of getFiles("./loadins")) await loadScript(f)
+  await Promise.all(Array.from(vmContextObject.loadedLoadIns).map(e => e[1].loaded))
   for await (const f of getFiles("./argtypes")) await loadScript(f)
   for await (const f of getFiles("./commands/prefix")) if (f.endsWith(".js")) await loadScript(f)
   for (const file of fs.readdirSync("./commands/slash/")) if (!file.endsWith(".js")) {
