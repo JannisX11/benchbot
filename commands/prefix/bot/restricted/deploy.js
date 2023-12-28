@@ -61,7 +61,8 @@ registerPrefixCommand(scriptName, prefixPath, {
     description: "Deploy the application commands."
   },
   permissions: ["BotOwner"],
-  async execute(message, args) {
+  async execute(message) {
+    const processing = await sendProcessing(message)
     try {
       const commands = []
 
@@ -93,14 +94,16 @@ registerPrefixCommand(scriptName, prefixPath, {
       else await rest.put(Discord.Routes.applicationCommands(client.user.id), { body: commands })
 
       sendMessage(message, {
-        description: "Successfully registered application commands."
+        description: "Successfully registered application commands.",
+        processing
       })
 
     } catch (err) {
       console.error(err)
       sendError(message, {
         title: "There was an error while deploying application commands",
-        description: err.message 
+        description: err.message,
+        processing
       })
     }
   }

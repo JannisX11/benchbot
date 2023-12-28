@@ -1,6 +1,6 @@
 registerPrefixCommand(scriptName, prefixPath, {
   help: {
-    description: "Reloads the bot without restarting it."
+    description: "Reload the bot without restarting it."
   },
   permissions: ["BotOwner"],
   async execute(message, args) {
