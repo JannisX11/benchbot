@@ -238,9 +238,9 @@ if (!testMode) {
           description: `\`${error.message}\`\n\n**Stack**\n\`\`\`${error.stack}`.limit(4093) + "```"
         })
       }
-    } catch(ex) {
+    } catch (err) {
       console.error(`Error at`, new Date())
-      console.error(ex)
+      console.error(err)
       console.error(`Error at`, new Date())
       console.error(error.message)
       if (error instanceof Discord.DiscordAPIError) {
