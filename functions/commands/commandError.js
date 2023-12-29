@@ -24,7 +24,7 @@ registerFunction(scriptName, async (message, error) => {
       })
     } else {
       if (message.member) title = `Application command command error in \`${message.guild.name}\` \`#${message.channel.name}\``
-      else title = `Application command command error in DMs with \`${message.user.tag}\``
+      else title = `Application command command error in DMs with \`${message.username}\``
       await sendMessage(await getChannel(config.channels.errors), {
         title,
         fields: [

@@ -23,7 +23,7 @@ registerArgType(scriptName, async (item, data) => {
       }
     } else {
       let user
-      if (id === client.user.id || item === client.user.username) {
+      if (id === client.user.id || item === client.user.username || item === client.user.globalName) {
         user = client.user
       } else if (id === data.message.author.id || item === data.message.author.username) {
         user = data.message.author

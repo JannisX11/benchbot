@@ -9,7 +9,7 @@ registerPrefixCommand(scriptName, prefixPath, {
   aliases: ["h", "hlp", "commands", "commandslist", "commandlist"],
   async execute(message, args, interaction) {
     if (!args[0]) return sendMessage(message, {
-      author: [client.user.username, client.icons.help],
+      author: [client.user.displayName, client.icons.help],
       thumbnail: avatar(client.user),
       description: `Use \`${getCommandName(message)} [category]\` to view the commands in a category\n\n\`${Object.keys(client.commandTree).join("`\n`").toTitleCase()}\``
     })
