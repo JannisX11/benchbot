@@ -1,6 +1,8 @@
 const map = {
   "<id:browse>": "Browse Channels",
-  "<id:customize>": "Customise Community"
+  "<id:customize>": "Customise Community",
+  "<id:guide>": "Server Guide",
+  "<id:home>": "Server Guide"
 }
 
 registerFunction(scriptName, async (guild, message) => {
@@ -10,13 +12,12 @@ registerFunction(scriptName, async (guild, message) => {
       if (m[1] === "@" || m[1] === "@!") {
         if (guild) try {
           const member = await getMember(guild, m[2])
-          if (member.nickname) return `@${member.nickname}`
-          return `@${member.user.username}`
+          return `@${member.displayName}`
         } catch {}
         const user = await getUser(m[2])
         return `@${user.username}`
       }
-      if (m[1] === "@&") return `@${(await getRole(guild, m[2])).name}`
+      if (m[1] === "@&" && guild) return `@${(await getRole(guild, m[2])).name}`
       if (m[1] === "#") return `#${(await getChannel(m[2])).name}`
       if (m[1] === ":" || m[1] === "a:") return m[3]
       if (m[1] === "t:") return new Date(parseInt(m[5])*1000).toUTCString().replace("GMT", "UTC")
