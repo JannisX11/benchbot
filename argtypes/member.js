@@ -3,7 +3,7 @@ registerArgType(scriptName, async (item, data) => {
   item = item.toLowerCase()
   let member
   if (item === "<<" && !data.noText) return createMember(data.message.author)
-  if (["<", "me"].includes(item) && !data.noText && data.message.member) return createMember(data.message.author)
+  if (["<", "me"].includes(item) && !data.noText && data.message.member) return data.message.member
   if (item === "^" && !data.noText) try {
     const messages = Array.from(await getMessages(data.message.channel, { before: data.message.id, limit: 1 }))
     if (messages[0][1].member) return messages[0][1].member
