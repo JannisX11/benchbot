@@ -1,8 +1,30 @@
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 const map = {
   "<id:browse>": "Browse Channels",
   "<id:customize>": "Customise Community",
   "<id:guide>": "Server Guide",
   "<id:home>": "Server Guide"
+}
+
+function relativeTime(epoch) {
+  const time = Date.now() / 1000
+  const delta = time - epoch
+  if (delta < 2 && delta > -2) return (delta >= 0 ? "just " : "") + "now"
+  if (delta < 60 && delta > -60) return delta >= 0 ? Math.floor(delta) + " seconds ago" : "in " + Math.floor(-delta) + " seconds"
+  if (delta < 120 && delta > -120) return delta >= 0 ? "about a minute ago" : "in about a minute"
+  if (delta < 3600 && delta > -3600) return delta >= 0 ? Math.floor(delta / 60) + " minutes ago" : "in " + Math.floor(-delta / 60) + " minutes"
+  if (delta < 7200 && delta > -7200) return delta >= 0 ? "about an hour ago" : "in about an hour"
+  if (delta < 86400 && delta > -86400) return delta >= 0 ? Math.floor(delta / 3600) + " hours ago" : "in " + Math.floor(-delta / 3600) + " hours"
+  if (delta < 172800 && delta > -172800) return delta >= 0 ? "1 day ago" : "in 1 day"
+  if (delta < 2505600 && delta > -2505600) return delta >= 0 ? Math.floor(delta / 86400) + " days ago" : "in " + Math.floor(-delta / 86400) + " days"
+  if (delta < 5184000 && delta > -5184000) return delta >= 0 ? "about a month ago" : "in about a month"
+  const currentYear = new Date().getUTCFullYear()
+  const epochYear = new Date(epoch * 1000).getUTCFullYear()
+  const monthDelta = 12 * currentYear + new Date(time * 1000).getUTCMonth() + 1 - 12 * epochYear - new Date(epoch * 1000).getUTCMonth() - 1
+  if (monthDelta < 12 && monthDelta > -12) return monthDelta >= 0 ? monthDelta + " months ago" : "in " + -monthDelta + " months";
+  const yearDelta = currentYear - epochYear
+  return yearDelta < 2 && yearDelta > -2 ? yearDelta >= 0 ? "a year ago" : "in a year" : yearDelta >= 0 ? yearDelta + " years ago" : "in " + -yearDelta + " years"
 }
 
 registerFunction(scriptName, async (guild, message) => {
@@ -20,7 +42,26 @@ registerFunction(scriptName, async (guild, message) => {
       if (m[1] === "@&" && guild) return `@${(await getRole(guild, m[2])).name}`
       if (m[1] === "#") return `#${(await getChannel(m[2])).name}`
       if (m[1] === ":" || m[1] === "a:") return m[3]
-      if (m[1] === "t:") return new Date(parseInt(m[5])*1000).toUTCString().replace("GMT", "UTC")
+      if (m[1] === "t:") {
+        const date = new Date(parseInt(m[5]) * 1000)
+        switch (m[7]) {
+          case "t":
+            return `${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
+          case "T":
+            return `${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()} UTC`
+          case "d":
+            return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()} UTC`
+          case "D":
+            return `${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} UTC`
+          case "f":
+          case undefined:
+            return `${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
+          case "F":
+            return `${days[date.getUTCDay()]}, ${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
+          case "R":
+            return relativeTime(m[5])
+        }
+      }
       if (m[1] === "/") return `/${m[3]}`
       return m[0]
     } catch {
