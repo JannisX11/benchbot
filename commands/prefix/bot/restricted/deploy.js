@@ -88,6 +88,34 @@ registerPrefixCommand(scriptName, prefixPath, {
         commands.push(command)
       }
 
+      for (const command of commands) {
+        if (command instanceof Discord.SlashCommandBuilder) {
+          let size = 0
+          function calculate(command) {
+            size += command.name.length
+            size += command.description.length
+            if (command.options) {
+              for (const option of command.options) {
+                if (option instanceof Discord.SlashCommandSubcommandBuilder || option instanceof Discord.SlashCommandSubcommandGroupBuilder) {
+                  calculate(option)
+                } else {
+                  size += option.name.length
+                  size += option.description.length
+                  if (option.choices) {
+                    for (const choice of option.choices) {
+                      size += choice.name.length
+                      size += choice.value.length
+                    }
+                  }
+                }
+              }
+            }
+          }
+          calculate(command)
+          if (size > 4000) throw Error(`Slash command over character limit: \`${command.name}\` is at \`${size}\` characters`)
+        }
+      }
+
       const rest = new Discord.REST({ version: "10" }).setToken(tokens.discord)
 
       if (testMode) await rest.put(Discord.Routes.applicationGuildCommands(client.user.id, message.guildId), { body: commands })
