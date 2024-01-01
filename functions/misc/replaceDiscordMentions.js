@@ -46,18 +46,18 @@ registerFunction(scriptName, async (guild, message) => {
         const date = new Date(parseInt(m[5]) * 1000)
         switch (m[7]) {
           case "t":
-            return `${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
+            return `${date.getUTCHours().toString().padStart(2, 0)}:${date.getUTCMinutes().toString().padStart(2, 0)} UTC`
           case "T":
-            return `${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()} UTC`
+            return `${date.getUTCHours().toString().padStart(2, 0)}:${date.getUTCMinutes().toString().padStart(2, 0)}:${date.getUTCSeconds().toString().padStart(2, 0)} UTC`
           case "d":
-            return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()} UTC`
+            return `${date.getUTCDate().toString().padStart(2, 0)}/${(date.getUTCMonth() + 1).toString().padStart(2, 0)}/${date.getUTCFullYear()} UTC`
           case "D":
-            return `${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} UTC`
+            return `${date.getUTCDate().toString().padStart(2, 0)} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} UTC`
           case "f":
           case undefined:
-            return `${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
+            return `${date.getUTCDate().toString().padStart(2, 0)} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} ${date.getUTCHours().toString().padStart(2, 0)}:${date.getUTCMinutes().toString().padStart(2, 0)} UTC`
           case "F":
-            return `${days[date.getUTCDay()]}, ${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()} UTC`
+            return `${days[date.getUTCDay()]}, ${date.getUTCDate().toString().padStart(2, 0)} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} ${date.getUTCHours().toString().padStart(2, 0)}:${date.getUTCMinutes().toString().padStart(2, 0)} UTC`
           case "R":
             return relativeTime(m[5])
         }
