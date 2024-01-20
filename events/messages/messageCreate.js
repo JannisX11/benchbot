@@ -2,7 +2,7 @@ registerEvent(scriptName, async message => {
   if (message.author.bot || message.system) return
   if (spamCheck(message)) return
   if (message.content === `<@${client.user.id}>` || message.content === `<@!${client.user.id}>`) return sendMessage(message, {
-    title: client.user.username,
+    title: client.user.displayName,
     thumbnail: avatar(client.user),
     description: `My prefix is \`${config.prefix}\`\n\nUse \`${config.prefix}help\` to view the commands that are available\n\nI also support slash commands!`
   })

@@ -189,7 +189,7 @@ async function reloadAll() {
     delete globalThis[script]
   }
   for (const [k, v] of vmContextObject.loadedEvents) client.off(k, v)
-  for (const [k, v] of vmContextObject.loadedLoadIns) await v?.()
+  for (const [k, v] of vmContextObject.loadedLoadIns) await v.unload?.()
   client.restrictedCommands = []
   client.commandTree = {}
   client.categories = {}
@@ -206,6 +206,7 @@ async function reloadAll() {
   vmContextObject.loadedLoadIns = new Map
   for await (const f of getFiles("./functions")) await loadScript(f)
   for await (const f of getFiles("./loadins")) await loadScript(f)
+  await Promise.all(Array.from(vmContextObject.loadedLoadIns).map(e => e[1].loaded))
   for await (const f of getFiles("./argtypes")) await loadScript(f)
   for await (const f of getFiles("./commands/prefix")) if (f.endsWith(".js")) await loadScript(f)
   for (const file of fs.readdirSync("./commands/slash/")) if (!file.endsWith(".js")) {
@@ -223,6 +224,7 @@ async function reloadAll() {
 
 if (!testMode) {
   process.on("unhandledRejection", async error => {
+    if (error.message === "Service Unavailable") return
     try {
       if (error instanceof Discord.DiscordAPIError) {
         if (error.message === "Unknown interaction") return
@@ -230,13 +232,23 @@ if (!testMode) {
           title: "An API error occured",
           description: `\`${error.message}\`\n\n**Status**\n\`${error.httpStatus}\`\n\n**Request**\n\`${error.method.toUpperCase()} ${error.path}\`\n\n**Data**\n\`\`\`${error.requestData?.json ? `${JSON.stringify(error.requestData.json)}\`\`\`\n` : ""}**Stack**\n\`\`\`${error.stack}`.limit(4093) + "```"
         })
+      } else {
+        await sendMessage(await getChannel(config.channels.errors), {
+          title: "An error occured",
+          description: `\`${error.message}\`\n\n**Stack**\n\`\`\`${error.stack}`.limit(4093) + "```"
+        })
       }
-      else await sendMessage(await getChannel(config.channels.errors), {
-        title: "An error occured",
-        description: `\`${error.message}\`\n\n**Stack**\n\`\`\`${error.stack}`.limit(4093) + "```"
-      })
-    } catch(ex) {
-      console.error(ex)
+    } catch (err) {
+      console.error(`Error at`, new Date())
+      console.error(err)
+      console.error(`Error at`, new Date())
+      console.error(error.message)
+      if (error instanceof Discord.DiscordAPIError) {
+        console.error(error.httpStatus)
+        console.error(error.method.toUpperCase(), error.path)
+        if (error.requestData?.json) console.error(JSON.stringify(error.requestData.json))
+      }
+      console.error(error.stack)
     }
   })
 }

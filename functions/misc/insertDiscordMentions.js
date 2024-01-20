@@ -10,7 +10,7 @@ registerFunction(scriptName, async (guild, message) => {
   const pings = parts.filter(e => e[0].startsWith("@"))
   for (const ping of pings) {
     const name = ping[0].slice(1).toLowerCase()
-    const member = guild.members.cache.find(e => e.user.username.toLowerCase() === name || e.nickname?.toLowerCase() === name || e.user.tag.toLowerCase() === name)
+    const member = guild.members.cache.find(e => e.user.username.toLowerCase() === name || e.user.globalName?.toLowerCase() === name || e.nickname?.toLowerCase() === name)
     if (member) replacements.push([ping, member.toString()])
     else {
       const role = guild.roles.cache.find(e => e.name.toLowerCase() === name)
