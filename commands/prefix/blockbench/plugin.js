@@ -33,7 +33,7 @@ registerPrefixCommand(scriptName, prefixPath, {
         const split = e.id.split(".")
         return {
           id: split,
-          count: e.count
+          count: stats[2].overlays[split[1]] ? 0 : e.count
         }
       }).sort((a, b) => b.count - a.count).filter(e => e.count).slice(0, 5).map(e => {
         e.id = `${e.id[0].toTitleCase(true)}: ${stats[2][e.id[0]]?.textures[e.id[1]].name ?? e.id[1].toTitleCase(true)}`
@@ -47,7 +47,7 @@ registerPrefixCommand(scriptName, prefixPath, {
         const split = e.id.split(".")
         return {
           id: split,
-          count: e.count
+          count: stats[2].overlays[split[1]] ? 0 : e.count
         }
       }).sort((a, b) => b.count - a.count).filter(e => e.count).slice(0, 5).map(e => {
         e.id = `${e.id[0].toTitleCase(true)}: ${stats[2][e.id[0]]?.textures[e.id[1]].name ?? e.id[1].toTitleCase(true)}`
@@ -57,9 +57,9 @@ registerPrefixCommand(scriptName, prefixPath, {
         return e
       }).map(e => `\`${e.id.padEnd(length)}\` - \`${e.count.toLocaleString()}\``).join("\n")
       fields.push(
-        ["Titles generated this week", `\`${stats[0].filter(e => !e.id.includes(".")).reduce((a, e) => a + e.count, 0).toLocaleString()}\``],
+        ["Titles generated this week", `\`${stats[0].filter(e => !e.id.includes(".") || e.id.startsWith("tileable.")).reduce((a, e) => a + e.count, 0).toLocaleString()}\``],
         ["Popular textures this week", popular],
-        ["Titles generated all time", `\`${stats[1].filter(e => !e.id.includes(".")).reduce((a, e) => a + e.count, 0).toLocaleString()}\``],
+        ["Titles generated all time", `\`${stats[1].filter(e => !e.id.includes(".") || e.id.startsWith("tileable.")).reduce((a, e) => a + e.count, 0).toLocaleString()}\``],
         ["Popular textures all time", popularAll]
       )
     } else if (plugin[0] === "cem_template_loader") {
