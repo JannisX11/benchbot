@@ -48,7 +48,6 @@ registerPrefixCommand(scriptName, prefixPath, {
           text: {
             id: "text",
             label: "FAQ Text",
-            maxLength: 1024,
             placeholder: "The text for the FAQ",
             long: true,
             required: true
