@@ -69,6 +69,13 @@ registerFunction(scriptName, async (message, modalMessage, modal, func, args, fu
       if (e.message !== "Collector received no interactions before ending with reason: time") console.error(e)
       return
     })
+    if (!interaction) {
+      sendError(message, {
+        message: "Took too long",
+        description: `${message.author} took too long, the modal timed out.`
+      })
+      return
+    }
     const [modal2, errorFields, required] = await parseModalFields(interaction, modal, fields, args)
     if (errorFields.length) {
       let buttons = [{
