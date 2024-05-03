@@ -5,7 +5,7 @@ registerPrefixCommand(scriptName, prefixPath, {
   aliases: ["newjob", "jobnew"],
   async execute(message) {
     const start = await choose(message, {
-      description: "Hello! Thank you for being interested in creating a job post! I will guide you through some questions for creating your job post. If you want to cancel the job post at any time, just ignore this message and it will time out.",
+      description: "Hello! Thank you for being interested in creating a job post! I will guide you through some questions for creating your job post. If you want to cancel the job post creation at any time, just ignore this message and it will time out.\n\n## Important\nThe job channels are just bulletin boards. The server team does not review or manage job posts. It is your responsibility to resolve potential issues with clients/artists.",
       options: ["Start!"],
       keep: true
     })
