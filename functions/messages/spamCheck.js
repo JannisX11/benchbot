@@ -4,15 +4,17 @@ registerFunction(scriptName, message => {
 
   function handleSpam(args) {
     deleteMessage(message)
-    message.member.kick(args.type)
+    if (message.member) {
+      message.member.kick(args.type)
+    }
     args.icon = client.icons.warningRed
     args.bad = true
     args.fields = [
-      ["Member", `${message.member} \`${message.member.id}\``],
+      ["Member", message.member ? `${message.member} \`${message.member.id}\`` : "Unknown member"],
       ["Channel", message.channel.toString()],
       ["Message content", `\`\`\`${content.limit(1018).replace(/`/g, "'")}\`\`\``]
     ]
-    args.footer = ["The message has been deleted and the member has been kicked"]
+    args.footer = [`The message has been deleted${message.member ? ` and the member has been kicked` : ""}`]
     sendLog(args)
     return true
   }

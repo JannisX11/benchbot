@@ -4,7 +4,7 @@ registerPrefixCommand(scriptName, prefixPath, {
   },
   permissions: ["BotOwner"],
   async execute(message, args) {
-    const p = spawn("git", ["pull"], {stdio: ["ignore", "pipe", "ignore"]})
+    const p = spawn("git", ["pull"], { stdio: ["ignore", "pipe", "ignore"] })
     let out = ""
     for await (const chunk of p.stdout) out += chunk
     out = out.trim()
