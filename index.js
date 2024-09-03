@@ -1,5 +1,3 @@
-import tokens from "./private/tokens.json" assert { type: "json" }
-import config from "./config.json" assert { type: "json" }
 import { stringSimilarity } from "string-similarity-js"
 import escapeStringRegexp from "escape-string-regexp"
 import { createRequire } from "node:module"
@@ -10,6 +8,11 @@ import fetch from "node-fetch"
 import path from "node:path"
 import vm from "node:vm"
 import fs from "node:fs"
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+const tokens = JSON.parse(fs.readFileSync("./private/tokens.json"))
+const config = JSON.parse(fs.readFileSync("./config.json"))
 
 //////////////////////////////////////////////////////////////////////////////////////
 
