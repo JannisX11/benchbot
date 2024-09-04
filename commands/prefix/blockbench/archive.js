@@ -1,3 +1,5 @@
+const types = ["png", "jpeg", "gif", "webp"]
+
 registerPrefixCommand(scriptName, prefixPath, {
   help: {
     description: [
@@ -17,10 +19,16 @@ registerPrefixCommand(scriptName, prefixPath, {
       [args[0], args[1]] = args[0].split(/(?<=^[^\n]*)\n/)
     }
     const images = Array.from(message.attachments.filter(e => e.contentType?.startsWith("image/"))).slice(0, 4)
-    if (!images.length) return sendError(message, {
-      title: "Missing images",
-      description: "Please provide at least one image"
-    })
+    if (!images.length) {
+      if (message.attachments.size) return sendError(message, {
+        title: "Missing images",
+        description: "The provided files were not images"
+      })
+      if (!images.length) return sendError(message, {
+        title: "Missing images",
+        description: "Please provide at least one image"
+      })
+    }
     if (args[0].length < 3) return sendError(message, {
       title: "Model title too short",
       description: "The mimimum title length is `3` characters. Please provide a longer title"
@@ -29,7 +37,35 @@ registerPrefixCommand(scriptName, prefixPath, {
       title: "Model title too long",
       description: "The maximum title length is `50` characters. Please provide a shorter title"
     })
-    const url = !message.command.application && message.guild ? `https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}` : images[0][1].url
+    let processing
+    const files = []
+    if (message.command.slash) {
+      processing = await sendProcessing(message, null, { ephemeral: true })
+      for (const [i, image] of images.entries()) {
+        const r = await fetch(image[1].url, { method: "HEAD" })
+        if (r.headers.get("content-length") > fileSizeLimit) {
+          return sendError(message, {
+            title: "File too large",
+            description: `The maximum file size is \`8 MB\`.\n\nTo use larger files, use the prefix command \`${config.prefix}${message.command.prefixCommand.name}\``,
+            processing
+          })
+        }
+        const type = r.headers.get("content-type").split("/")
+        if (type[0] !== "image" || !types.includes(type[1])) {
+          return sendError(message, {
+            title: "Not a valid image",
+            description: `The provided [file](${image[1].url}) was not an valid image. The supported image types are: \`${types.join("`, `")}\``,
+            processing
+          })
+        }
+        files.push(await makeFile({
+          name: `image${i}.${type[1]}`,
+          buffer: Buffer.from(await fetch(image[1].url).then(e => e.arrayBuffer()))
+        }))
+        image[1].url = `attachment://image${i}.${type[1]}`
+      }
+    }
+    const url = !message.command.slash && message.guild ? `https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}` : message.command.slash ? "https://web.blockbench.net/" : images[0][1].url
     const embeds = [{
       title: args[0],
       url,
@@ -41,8 +77,11 @@ registerPrefixCommand(scriptName, prefixPath, {
       url,
       image: image[1].url
     })
-    const archive = await sendMessage(await getChannel(config.channels.archive), { embeds })
-    if (message.command.application) sendMessage(message, {
+    const archive = await sendMessage(await getChannel(config.channels.archive), {
+      embeds,
+      files
+    })
+    if (message.command.slash) sendMessage(message, {
       description: "The model was added to the archive!",
       ephemeral: true,
       components: [makeRow({
@@ -54,6 +93,8 @@ registerPrefixCommand(scriptName, prefixPath, {
     })
     else timedReact(message, client.emotes.success)
     react(archive, config.emotes.like)
-    archive.crosspost()
+    if (isType.channel(message.channel, "GuildNews")) {
+      archive.crosspost()
+    }
   }
 })
