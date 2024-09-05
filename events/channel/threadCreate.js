@@ -14,7 +14,15 @@ registerEvent(scriptName, async thread => {
         colour: client.colours.error
       })
     }
-    setTimeout(() => sendMessage(thread, { embeds }), 3000)
+    setTimeout(async () => {
+      try {
+        await sendMessage(thread, { embeds })
+      } catch {
+        // Retry sending if it fails to send to the thread the first time
+        // Silently fail if it sends to fail the second time
+        setTimeout(() => sendMessage(thread, { embeds }).catch(), 3000)
+      }
+    }, 3000)
   }
 })
 
