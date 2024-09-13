@@ -77,7 +77,8 @@ registerPrefixCommand(scriptName, prefixPath, {
       url,
       image: image[1].url
     })
-    const archive = await sendMessage(await getChannel(config.channels.archive), {
+    const channel = await getChannel(config.channels.archive)
+    const archive = await sendMessage(channel, {
       embeds,
       files
     })
@@ -93,7 +94,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     })
     else timedReact(message, client.emotes.success)
     react(archive, config.emotes.like)
-    if (isType.channel(message.channel, "GuildNews")) {
+    if (isType.channel(channel, "GuildNews")) {
       archive.crosspost()
     }
   }
