@@ -25,11 +25,12 @@ registerPrefixCommand(scriptName, prefixPath, {
   arguments: ["*code"],
   permissions: ["BotOwner"],
   async execute(message, args) {
+    const m = args[0].match(/(?<=```(?:js|javascript)?\n)[\s\S]*(?=```)/gm)
+    if (m) args[0] = m[0]
     const guild = message.guild
     const channel = message.channel
     const member = message.member
     const user = message.author
-    args[0] = args[0].replace(/^```(js|javascript)?|```$/g, "").trim()
     const evalOut = new ConsoleOutput()
     evalOut.setEncoding("utf8")
     const console3 = new Console({
@@ -65,8 +66,13 @@ registerPrefixCommand(scriptName, prefixPath, {
         buffer: Buffer.from(out, "utf8")
       })
       if (out === "null") return
+      if (out === "") {
+        return sendMessage(message, {
+          description: "The command returned no output"
+        })
+      }
       sendMessage(message, {
-        description: `\`\`\`js\n${out}\`\`\``
+        description: `\`\`\`js\n${out}\n\`\`\``
       })
     } catch(err) {
       sendError(message, {

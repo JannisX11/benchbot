@@ -54,7 +54,7 @@ registerPrefixCommand(scriptName, prefixPath, {
           }
         }
       ]
-    }, async (fields, interaction, message) => {
+    }, async (fields, interaction, skipped, message) => {
       faq = {
         category: fields.category,
         id: fields.id,

@@ -53,7 +53,9 @@ globalThis.getFiles = async function*(dir) {
 }
 
 const titleReplacements = {
-  "U R L": "URL"
+  "U R L": "URL",
+  "Uv": "UV",
+  "3 D": "3D"
 }
 
 const titlePattern = new RegExp(`\\b(${Object.keys(titleReplacements).join("|")})\\b`, "gi")
@@ -258,7 +260,11 @@ if (!testMode) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-await reloadAll()
+client.once("ready", async () => {
+  console.log(`${client.user.displayName} online`)
+  await reloadAll()
+  client.emit("ready")
+})
 
 //////////////////////////////////////////////////////////////////////////////////////
 
