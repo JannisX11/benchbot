@@ -47,7 +47,7 @@ registerPrefixCommand(scriptName, prefixPath, {
           }
         }
       ]
-    }, async (fields, interaction, message) => {
+    }, async (fields, interaction, skipped, message) => {
       rule.push(await insertDiscordMentions(message.guild, fields.rule))
       if (fields.description) rule.push(await insertDiscordMentions(message.guild, fields.description))
       modalMessage = message

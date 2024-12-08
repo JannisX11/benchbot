@@ -44,7 +44,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     })
     let slash
     if (command.slashCommand) {
-      const id = await getCommand(command.slashCommand, {guild: testMode ? message.guild : undefined, id: true})
+      const id = await getCommand(command.slashCommand, { guild: testMode ? message.guild : undefined, id: true })
       if (id) slash = `</${command.slashCommand.tree.join(" ")}:${id}>`
     }
     const fields = [

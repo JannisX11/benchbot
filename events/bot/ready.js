@@ -1,5 +1,5 @@
 registerEvent(scriptName, async () => {
-  console.log(`${client.user.displayName} online`)
+  console.log(`${client.user.displayName} ready`)
   setActivity()
   if (fs.existsSync("./restart.json")) {
     const data = JSON.parse(fs.readFileSync("./restart.json", "utf8"))

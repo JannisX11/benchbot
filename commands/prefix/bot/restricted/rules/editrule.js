@@ -53,7 +53,7 @@ registerPrefixCommand(scriptName, prefixPath, {
           }
         }
       ]
-    }, async (fields, interaction, message) => {
+    }, async (fields, interaction, skipped, message) => {
       newRule.push(await insertDiscordMentions(message.guild, fields.rule))
       if (fields.description) newRule.push(await insertDiscordMentions(message.guild, fields.description))
       return true

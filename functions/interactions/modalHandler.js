@@ -29,7 +29,7 @@ registerFunction(scriptName, async (message, modalMessage, modal, func, args, fu
             processing: args.interaction ? undefined : modalMessage
           })
         }
-        finished = await func(fields, interaction, modalMessage)
+        finished = await func(fields, interaction, null, modalMessage)
         if (finished) {
           state.timeout = false
           if (finished === 2) finished = false
@@ -102,7 +102,7 @@ registerFunction(scriptName, async (message, modalMessage, modal, func, args, fu
       if (!(await modalHandler(message, modalMessage, modal2, func, args, func2))) return
       finished = true
     } else {
-      finished = await func(fields, interaction, interaction)
+      finished = await func(fields, interaction, null, interaction)
       if (finished === 2) finished = false
     }
   }
