@@ -33,6 +33,30 @@ registerFunction(scriptName, message => {
     description: "Tried to spam free nitro"
   })
 
+  // Steam gift scam
+  if (
+    content.length > 30 && content.length < 180 &&
+    (
+      content.match(/gift.{1,10}http(s)?:\/\/ste.+m.*\.com.*\/[0-9]+/i) ||
+      (content.match(/http(s)?:\/\/.+\.ru\//i) && content.match(/nitro/i))
+    )
+  ) return handleSpam({
+    type: "Steam gift scam",
+    description: "Tried to spam steam gift code scams"
+  })
+
+  // General russian bots
+  if (
+    content.length > 30 && content.length < 180 &&
+    content.match(/[А-Яа-я ]{10,}/) &&
+    content.match(/http(s)?:\/\/.+\.ru\//i) &&
+    !content.match(/blockbench/i) &&
+    !content.match(/minecraft/i)
+  ) return handleSpam({
+    type: "Scam link",
+    description: "Tried to spam scam links with .ru domain"
+  })
+
   // Everyone ping
   if (content.includes("@everyone")) return handleSpam({
     type: "Pinged everyone",
