@@ -37,7 +37,7 @@ registerFunction(scriptName, message => {
   if (
     content.length > 30 && content.length < 180 &&
     (
-      content.match(/gift.{1,10}http(s)?:\/\/ste.+m.*\.com.*\/[0-9]+/i) ||
+      content.match(/(\$ gift|gift .*\$).{1,10}http(s)?:\/\/[\w\/\.]+$/i) ||
       (content.match(/http(s)?:\/\/.+\.ru\//i) && content.match(/nitro/i))
     )
   ) return handleSpam({
