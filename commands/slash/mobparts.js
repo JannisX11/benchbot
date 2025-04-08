@@ -15,9 +15,9 @@ registerSlashCommand(scriptName, slashPath, {
           name: e,
           display_name: e.toTitleCase(true)
         }
-        if (!e.display_name) e.display_name = e.name.toTitleCase(true)
+        if (!e.display_name && e.name) e.display_name = e.name.toTitleCase(true)
         return e
-      }).filter(e => e.name.includes(text) || e.display_name.toLowerCase().includes(text)).sort((a, b) => {
+      }).filter(e => e.name?.includes(text) || e.display_name?.toLowerCase().includes(text)).sort((a, b) => {
         a = a.display_name
         b = b.display_name
         if (a.startsWith(text)) {
