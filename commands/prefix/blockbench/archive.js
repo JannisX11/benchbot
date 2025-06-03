@@ -35,7 +35,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     })
     if (args[0].length > 50) return sendError(message, {
       title: "Model title too long",
-      description: "The maximum title length is `50` characters. Please provide a shorter title"
+      description: "The maximum title length is `50` characters. Please provide a shorter title.\nThe first line of your post gets used as the title. You can add additional lines to write a description."
     })
     let processing
     const files = []
