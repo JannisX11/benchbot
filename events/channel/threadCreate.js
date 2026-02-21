@@ -29,9 +29,9 @@ registerEvent(scriptName, async thread => {
       title: `Welcome to the Blockbench feedback forum!`,
       description: [
         `Thank you for submitting feedback about Blockbench! We appreciate it because it helps us make the app better!`,
-        `If you have a GitHub account, you can also submit bug reports and suggestions on the [Blockbench GitHub repository](https://github.com/JannisX11/blockbench/issues), as that makes it easier for us to organize.`
-        `Please keep in mind that, while we take all feedback into account, unfortunately we can't reply to every post.`
-        `For certain bugs, it's helpful for investigating it to see the console log. To open the console, press Ctrl + Shift + I or click Help > Developer > Open Dev Tools and switch to the Console tab.`
+        `If you have a GitHub account, you can also submit bug reports and suggestions on the [Blockbench GitHub repository](https://github.com/JannisX11/blockbench/issues), as that makes it easier for us to organize.`,
+        `Please keep in mind that, while we take all feedback into account, unfortunately we can't reply to every post.`,
+        `For certain bugs, it's helpful for investigating it to see the console log. To open the console, press Ctrl + Shift + I or click Help > Developer > Open Dev Tools and switch to the Console tab.`,
       ].join('\n\n'),
       colour: client.colours.success
     }]
