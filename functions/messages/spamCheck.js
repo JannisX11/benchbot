@@ -93,7 +93,8 @@ registerFunction(scriptName, message => {
     content.match(/discord\.(?:gg|com\/invite)\/\w+/) &&
     (
       message.channelId === config.channels.introductions ||
-      content.match(/nudes|family|sex|tiktok|nsfw|18/)
+      message.channelId === config.channels.commands ||
+      content.match(/nude|family|sex|tiktok|girl|porn|nsfw|18/)
     )
   ) return handleSpam({
     type: "Invite spam",
