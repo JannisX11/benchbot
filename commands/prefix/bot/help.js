@@ -11,7 +11,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     if (!args[0]) return sendMessage(message, {
       author: [client.user.displayName, client.icons.help],
       thumbnail: avatar(client.user),
-      description: `Use \`${getCommandName(message)} [category]\` to view the commands in a category\n\n\`${Object.keys(client.commandTree).join("`\n`").toTitleCase()}\``
+      description: `Use \`${await getCommandName(message)} [category]\` to view the commands in a category\n\n\`${Object.keys(client.commandTree).join("`\n`").toTitleCase()}\``
     })
     let input
     if (args[0].name) input = args[0].name
@@ -27,7 +27,7 @@ registerPrefixCommand(scriptName, prefixPath, {
       const subcategories = Object.keys(category.categories).filter(e => e !== "restricted")
       return sendMessage(message, {
         author: [tree.join(" > "), client.icons.help],
-        description: `Use \`${getCommandName(message)} [command]\` to view more information about a command\n\n` +
+        description: `Use \`${await getCommandName(message)} [command]\` to view more information about a command\n\n` +
                      (category.description ? `**Description**\`\`\`\n${Array.isArray(category.description) ? category.description.join("``````") : category.description}\`\`\`\n` : "") +
                      (subcategories.length > 0 ? `**Subcategories**\n\`${subcategories.join("`\n`").toTitleCase()}\`\n\n` : "") +
                      (category.commands.length > 0 ? `**Commands**\`\`\`\n${category.commands.map(e => `${e.name.padEnd(maxLength)}${e.help?.arguments ? e.help.arguments.replace(/ /g, "") : ""}`).join("\n")}\`\`\`\n` : "")
