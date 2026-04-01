@@ -63,7 +63,7 @@ registerEvent(scriptName, async interaction => {
       await interaction.member.roles.add(config.roles.jobs)
       sendPrivateMessage(interaction, {
         title: "You now have job channel access",
-        description: `The job channels are now available to you:\n\n<#${config.channels.job.artist}>\n<#${config.channels.job.job}>\n<#${config.channels.job.project}>\n\nTo create a post in any of these channels, go to <#${config.channels.commands}> and use the ${await getCommandName(interaction, "job", null, "slash")} command.`
+        description: `The job channels are now available to you:\n\n<#${config.channels.job.artist}>\n<#${config.channels.job.job}>\n<#${config.channels.job.project}>\n<#${config.channels.job.discussion}>\n\nTo create a post in any of these channels, go to <#${config.channels.commands}> and use the ${await getCommandName(interaction, "job", null, "slash")} command.`
       })
     }
   }
