@@ -2,18 +2,24 @@ function getEntities(cem) {
   const entities = []
   for (const category of cem.categories) {
     if (category.type) continue
+    let heading
     for (const entity of category.entities) {
-      if (entity.type) continue
-      entities.push({ ...entity, category: category.name })
+      if (entity.type === "heading") { heading = entity.text; continue }
+      entities.push({ ...entity, category: category.name, heading })
       if (entity.variants) {
         for (const variant of entity.variants) {
           variant.model ??= entity.model ?? entity.id
-          entities.push({ ...variant, category: category.name })
+          entities.push({ ...variant, category: category.name, heading })
         }
       }
     }
   }
   return entities
+}
+
+function displayName(entity) {
+  const name = entity.name ?? (entity.file ?? entity.id).replace(/_/g, " ").toTitleCase()
+  return entity.heading ? `${name} [${entity.heading}]` : name
 }
 
 registerPrefixCommand(scriptName, prefixPath, {
@@ -99,7 +105,7 @@ registerPrefixCommand(scriptName, prefixPath, {
       : entityData.category === "Unreleased" ? ["This entity is currently unreleased"]
       : ["You can use the CEM Template Loader plugin to load a working template with the correct part names and pivot points"]
     sendMessage(message, {
-      title: entityData.name ?? (entityData.file ?? entityData.id).replace(/_/g, " ").toTitleCase(),
+      title: displayName(entityData),
       description: quoteList(bones),
       thumbnail: `https://wynem.com/assets/images/minecraft/renders/${entity}.webp`,
       fields: fields.length ? fields : undefined,
