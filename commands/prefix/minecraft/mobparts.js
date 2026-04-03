@@ -1,17 +1,16 @@
-function flatten(entity) {
-  if (typeof entity === "string") {
-    return entity
-  }
-  const entities = [entity]
-  if (entity.variants) {
-    for (let variant of entity.variants) {
-      if (typeof variant === "string") {
-        variant = {
-          name: variant
+function getEntities(cem) {
+  const entities = []
+  for (const category of cem.categories) {
+    if (category.type) continue
+    for (const entity of category.entities) {
+      if (entity.type) continue
+      entities.push({ ...entity, category: category.name })
+      if (entity.variants) {
+        for (const variant of entity.variants) {
+          variant.model ??= entity.model ?? entity.id
+          entities.push({ ...variant, category: category.name })
         }
       }
-      variant.model ??= entity.model ?? entity.name
-      entities.push(variant)
     }
   }
   return entities
@@ -27,76 +26,53 @@ registerPrefixCommand(scriptName, prefixPath, {
   async execute(message, args) {
     let entity = args[0]
     const cem = await cache.cem()
-    const supported = cem.categories.find(e => e.name === "Supported").entities.flatMap(flatten)
-    const legacy = cem.categories.find(e => e.name === "Legacy").entities.flatMap(flatten)
-    const unsupported = cem.categories.find(e => e.name === "Unsupported")?.entities.flatMap(flatten) ?? []
-    const unreleased = cem.categories.find(e => e.name === "Unreleased")?.entities.flatMap(flatten) ?? []
-    let supportedEntities = supported.map(e => e.name ?? e)
-    let legacyEntities = legacy.map(e => e.name ?? e)
-    let unsupportedEntities = unsupported.map(e => e.name ?? e)
-    let unreleasedEntities = unreleased.map(e => e.name ?? e)
+    const allEntities = getEntities(cem)
+
     if (!entity) {
-      const types = [
-        ["Supported", supportedEntities],
-        ["Legacy", legacyEntities],
-        ["Unsupported", unsupportedEntities],
-        ["Unreleased", unreleasedEntities]
-      ].filter(e => e[1].length)
-      const embeds = types.flatMap(e => {
-        if (e[0] === "Legacy") {
-          const fields = []
-          for (const entity of e[1]) {
-            if (entity.type === "heading") {
-              fields.push([entity.text, []])
-            } else if (!entity.type) {
-              fields[fields.length - 1][1].push(entity)
-            }
-          }
-          return {
-            author: ["OptiFine Custom Entity Models", client.icons.optifine],
-            title: "Legacy Entities",
-            fields: fields.map(e => [e[0], quoteList(e[1])])
+      const usage = `Use ${await getCommandName(message, "mobparts", "[entity]")} to view the parts of a specific entity`
+      const categories = cem.categories.filter(c => !c.type && c.entities.some(e => !e.type))
+      const embeds = categories.flatMap(c => {
+        const hasHeadings = c.entities.some(e => e.type === "heading")
+        const sections = hasHeadings
+          ? c.entities.reduce((s, e) => {
+              if (e.type === "heading") s.push([e.text, []])
+              else if (!e.type) s[s.length - 1][1].push(e.id)
+              return s
+            }, [])
+          : [[null, c.entities.filter(e => !e.type).map(e => e.id)]]
+        const pages = []
+        let current = ""
+        for (const [heading, ids] of sections) {
+          const text = (heading ? `### ${heading}\n` : "") + quoteList(ids) + "\n"
+          if (current && current.length + text.length > 4096 - usage.length - 2) {
+            pages.push(current.trim())
+            current = text
+          } else {
+            current += text
           }
         }
-        const parts = []
-        const entities = e[1].filter(e => !e.type)
-        for (let i = 0; i < entities.length; i += 128) {
-          parts.push(entities.slice(i, i + 128))
-        }
-        return parts.map((p, i) => ({
+        if (current.trim()) pages.push(current.trim())
+        return pages.map((p, i) => ({
           author: ["OptiFine Custom Entity Models", client.icons.optifine],
-          title: `${e[0]} Entities${parts.length > 1 ? ` - ${i + 1}/${parts.length}` : ""}`,
-          description: i + 1 < parts.length ? quoteList(p) + "…" : quoteList(p)
+          title: `${c.name} Entities${pages.length > 1 ? ` - ${i + 1}/${pages.length}` : ""}`,
+          description: `${usage}${p.startsWith("### ") ? "\n" : "\n\n"}${p}`
         }))
       })
       return paginationHandler(message, embeds, {
         selector: {
           name: "Category Name",
-          items: types.map(e => e[0]),
+          items: categories.map(c => c.name),
           find: str => embeds.findIndex(e => e.title.toLowerCase().split(" - ")[0].includes(str.toLowerCase()))
         }
       })
     }
+
     entity = entity.toLowerCase().replace(/\s/g, "_")
     let entityData, processing
-    supportedEntities = supportedEntities.filter(e => !e.type)
-    legacyEntities = legacyEntities.filter(e => !e.type)
-    unsupportedEntities = unsupportedEntities.filter(e => !e.type)
-    unreleasedEntities = unreleasedEntities.filter(e => !e.type)
-    let footer = ["You can use the CEM Template Loader plugin to load a working template with the correct part names and pivot points"]
     while (!entityData) {
-      if (supportedEntities.includes(entity)) {
-        entityData = supported.find(e => (e.name ?? e) === entity)
-      } else if (legacyEntities.includes(entity)) {
-        entityData = legacy.find(e => (e.name ?? e) === entity)
-      } else if (unsupportedEntities.includes(entity)) {
-        entityData = unsupported.find(e => (e.name ?? e) === entity)
-        footer = ["This entity is currently NOT supported by OptiFine"]
-      } else if (unreleasedEntities.includes(entity)) {
-        entityData = unreleased.find(e => (e.name ?? e) === entity)
-        footer = ["This entity is currently unreleased"]
-      } else {
-        const closest = closestMatch(entity, supportedEntities.concat(legacyEntities, unsupportedEntities, unreleasedEntities), 0)
+      entityData = allEntities.find(e => e.id === entity)
+      if (!entityData) {
+        const closest = closestMatch(entity, allEntities.map(e => e.id), 0)
         const suggestion = await confirm(message, {
           title: `The entity ${limit(entity).quote()} was not found`,
           description: `Did you mean ${closest.quote()}?`,
@@ -113,29 +89,26 @@ registerPrefixCommand(scriptName, prefixPath, {
         processing = suggestion[1]
       }
     }
-    const bones = JSON.parse(cem.models[entityData.model ?? entityData.name ?? entityData].model).models.map(e => e.part)
-    const entityName = entityData.display_name ?? (entityData.name ?? entityData).replace(/_/g, " ").toTitleCase()
+
+    const bones = JSON.parse(cem.models[entityData.model ?? entityData.id].model).models.map(e => e.part)
+    const fields = []
+    if (entityData.variants) {
+      fields.push(["Variants", `${quoteList(entityData.variants.map(v => v.id))}\n\nUse ${await getCommandName(message, "mobparts", "[variant]")} to view the parts of a variant`])
+    }
+    const footer = entityData.category === "Unsupported" ? ["This entity is currently NOT supported by OptiFine"]
+      : entityData.category === "Unreleased" ? ["This entity is currently unreleased"]
+      : ["You can use the CEM Template Loader plugin to load a working template with the correct part names and pivot points"]
     sendMessage(message, {
-      title: entityName,
+      title: entityData.name ?? (entityData.file ?? entityData.id).replace(/_/g, " ").toTitleCase(),
       description: quoteList(bones),
       thumbnail: `https://wynem.com/assets/images/minecraft/renders/${entity}.webp`,
+      fields: fields.length ? fields : undefined,
       footer,
-      components: [makeRow({
-        buttons: [
-          {
-            label: "View online",
-            url: `https://wynem.com/cem/?entity=${entity}`
-          },
-          {
-            label: "Download template",
-            url: `https://wynem.com/cem/?entity=${entity}&download`
-          },
-          {
-            label: "Open in Blockbench",
-            url: `https://web.blockbench.net/?plugins=cem_template_loader&model=${entity}&texture`
-          }
-        ]
-      })],
+      components: [component.row(
+        component.button({ label: "View online", url: `https://wynem.com/cem/?entity=${entity}` }),
+        component.button({ label: "Download template", url: `https://wynem.com/cem/?entity=${entity}&download` }),
+        component.button({ label: "Open in Blockbench", url: `https://web.blockbench.net/?plugins=cem_template_loader&model=${entity}&texture` })
+      )],
       processing
     })
   }
