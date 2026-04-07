@@ -1,10 +1,15 @@
-registerFunction(scriptName, message => {
+registerFunction(scriptName, _message => {
+  /**
+   * @type {import('discord.js').Message}}
+   */
+  var message = _message;
+
   if (!message.guild || isMod(message.member)) return
   const content = message.content.toLowerCase()
 
-  function handleSpam(args) {
+  function handleSpam(args, kick = true) {
     deleteMessage(message)
-    if (message.member) {
+    if (kick && message.member) {
       message.member.kick(args.type)
     }
     args.icon = client.icons.warningRed
@@ -14,7 +19,7 @@ registerFunction(scriptName, message => {
       ["Channel", message.channel.toString()],
       ["Message content", `\`\`\`${content.limit(1018).replace(/`/g, "'")}\`\`\``]
     ]
-    args.footer = [`The message has been deleted${message.member ? ` and the member has been kicked` : ""}`]
+    args.footer = [`The message has been deleted${(kick && message.member) ? ` and the member has been kicked` : ""}`]
     sendLog(args)
     return true
   }
@@ -55,6 +60,27 @@ registerFunction(scriptName, message => {
     }
   }
 
+  if (message.attachments?.size == 4 && (message.content.length < 3 || message.content.includes("bro")) && message.channel.type == 0) {
+    return handleSpam({
+      type: "Likely 4 image crypto scam",
+      description: "Tried to post 4 images, which is a common pattern for spam messages. Not kicked since it could be legit."
+    }, false)
+  }
+
+  if ([3, 4].includes(message.attachments?.size) && (message.content.length < 12) && message.channelId == config.channels.commands) {
+    handleSpam({
+      type: "4 image crypto scam",
+      description: "Tried to post 4 images, which is a common pattern for spam messages. Banning the user since this was in the commands channel"
+    }, false);
+    if (message.member) {
+      message.member.ban({
+        deleteMessageSeconds: 120,
+        reason: "Automated ban for spam message"
+      })
+    }
+    return true;
+  }
+
   // General russian bots
   if (
     content.length > 30 && content.length < 180 &&
@@ -90,11 +116,11 @@ registerFunction(scriptName, message => {
 
   // Invite spam
   if (
-    content.match(/discord\.(?:gg|com\/invite)\/\w+/) &&
+    content.match(/discord(app)?\.(?:gg|com\/invite)\/\w+/) &&
     (
       message.channelId === config.channels.introductions ||
       message.channelId === config.channels.commands ||
-      content.match(/nude|family|sex|tiktok|girl|porn|nsfw|18/)
+      content.match(/nude|family|sex|tiktok|girl|porn|nsfw|shy|slut|18/)
     )
   ) return handleSpam({
     type: "Invite spam",
