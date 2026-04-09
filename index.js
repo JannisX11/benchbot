@@ -4,7 +4,6 @@ import { createRequire } from "node:module"
 import child_process from "child_process"
 import Database from "better-sqlite3"
 import Discord from "discord.js"
-import fetch from "node-fetch"
 import path from "node:path"
 import vm from "node:vm"
 import fs from "node:fs"
@@ -32,7 +31,6 @@ config.save = () => {
   return "Saved!"
 }
 
-globalThis.fetch = fetch
 globalThis.config = config
 globalThis.testMode = process.argv.includes("-dev")
 globalThis.database = new Database("database.db")
@@ -67,9 +65,10 @@ String.prototype.toTitleCase = function(c, n) {
   return t.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).trim().replace(titlePattern, (a, b) => titleReplacements[b])
 }
 
-String.prototype.limit = function(l = 128) {
-  if (this.length <= l) return this
-  return this.slice(0, l - 1) + "…"
+globalThis.limit = (str, length = 128) => {
+  if (typeof str != "string") str = String(str)
+  if (str.length <= length) return str.trim()
+  return str.slice(0, length - 1).trim() + "…"
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +146,6 @@ const vmContextObject = Object.assign({
   require: createRequire(import.meta.url),
   argTypes: {},
   toTitleCase: String.prototype.toTitleCase,
-  limit: String.prototype.limit,
   loadedFunctions: new Set,
   loadedEvents: new Map,
   loadedLoadIns: new Map,
@@ -175,7 +173,7 @@ async function loadScript(filePath) {
     const __filename = "${key}"
     const scriptName = "${path.basename(key, ".js")}"
     const prefixPath = "${path.relative("./commands/prefix", path.dirname(key)).replace(/\\/g, "\\\\")}".split(/\\\\|\\\//)
-    const slashPath = "${path.relative("./commands/slash", path.dirname(key)).replace(/\\/g, "\\\\")}".split(/\\\\|\\\//).filter(e => e)
+    const slashPath = "${path.relative("./commands/slash", path.dirname(key)).replace(/\\/g, "\\\\")}".split(/\\\\|\\\//).filter(Boolean)
     return (async () => {
       ${await fs.promises.readFile(key, "utf-8")}
     })()
@@ -240,12 +238,12 @@ process.on("unhandledRejection", async error => {
       if (error.message === "Unknown interaction") return
       await sendMessage(await getChannel(config.channels.errors), {
         title: "An API error occured",
-        description: `\`${error.message}\`\n\n**Status**\n\`${error.httpStatus}\`\n\n**Request**\n\`${error.method.toUpperCase()} ${error.path}\`\n\n**Data**\n\`\`\`${error.requestData?.json ? `${JSON.stringify(error.requestData.json)}\`\`\`\n` : ""}**Stack**\n\`\`\`${error.stack}`.limit(4093) + "```"
+        description: limit(`\`${error.message}\`\n\n**Status**\n\`${error.httpStatus}\`\n\n**Request**\n\`${error.method.toUpperCase()} ${error.path}\`\n\n**Data**\n\`\`\`${error.requestData?.json ? `${JSON.stringify(error.requestData.json)}\`\`\`\n` : ""}**Stack**\n\`\`\`${error.stack}`, 4093) + "```"
       })
     } else {
       await sendMessage(await getChannel(config.channels.errors), {
         title: "An error occured",
-        description: `\`${error.message}\`\n\n**Stack**\n\`\`\`${error.stack}`.limit(4093) + "```"
+        description: limit(`\`${error.message}\`\n\n**Stack**\n\`\`\`${error.stack}`, 4093) + "```"
       })
     }
   } catch (err) {

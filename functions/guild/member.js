@@ -1,12 +1,13 @@
 registerFunction(scriptName, {
   createMember(user) {
-    const member = new Discord.GuildMember
-    member.user = user
+    const member = new Discord.GuildMember(client, {
+      user
+    })
     Object.defineProperty(member, "displayName", {
-      get: () => user.displayName
+      value: user.displayName
     })
     Object.defineProperty(member, "displayColor", {
-      get: () => 0
+      value: 0
     })
     return member
   },

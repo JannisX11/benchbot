@@ -56,5 +56,5 @@ export default {
         WHERE alias.value = ?
       )
     )
-  `, "get", (c, i, a) => [c, i, a, a], o => !!o)
+  `, "get", (c, i, a) => [c, i, a], o => !!o)
 }
