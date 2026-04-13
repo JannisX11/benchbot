@@ -60,14 +60,7 @@ registerFunction(scriptName, _message => {
     }
   }
 
-  if (message.attachments?.size == 4 && (message.content.length < 3 || message.content.includes("bro")) && message.channel.type == 0) {
-    return handleSpam({
-      type: "Likely 4 image crypto scam",
-      description: "Tried to post 4 images, which is a common pattern for spam messages. Not kicked since it could be legit."
-    }, false)
-  }
-
-  if ([3, 4].includes(message.attachments?.size) && (message.content.length < 12) && message.channelId == config.channels.commands) {
+  if ([3, 4].includes(message.attachments?.size) && (message.content.length < 24) && message.channelId == config.channels.commands) {
     handleSpam({
       type: "4 image crypto scam",
       description: "Tried to post 4 images, which is a common pattern for spam messages. Banning the user since this was in the commands channel"
@@ -79,6 +72,13 @@ registerFunction(scriptName, _message => {
       })
     }
     return true;
+  }
+
+  if (message.attachments?.size == 4 && (message.content.length < 3 || message.content.includes("bro")) && message.channel.type == 0) {
+    return handleSpam({
+      type: "Likely 4 image crypto scam",
+      description: "Tried to post 4 images, which is a common pattern for spam messages. Not kicked since it could be a false positive."
+    }, false)
   }
 
   // General russian bots
