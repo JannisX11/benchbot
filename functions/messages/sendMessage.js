@@ -32,6 +32,7 @@ async function send(message, channel, processing, content) {
       } catch (err) {
         if (isType.error(err, "MessageWasBlockedByAutomaticModeration")) return interaction
       }
+      if (isType.error(err, "UnknownMessage")) return interaction
       deliveryError = err
     }
     if (processing instanceof Discord.Message) {

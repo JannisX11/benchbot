@@ -44,6 +44,7 @@ registerFunction(scriptName, {
           interaction.message = sent
           return interaction
         } catch (err) {
+          if (isType.error(err, "UnknownMessage")) return interaction
           deliveryError = err
         }
       } else {
