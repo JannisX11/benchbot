@@ -1,40 +1,84 @@
 registerFunction(scriptName, {
   async sendError(message, data) {
     if (!message) return
-    if (message.command && !data.ignoreCooldown) clearCooldown(message)
-    const channel = message.channel ?? message
-    data.author = ["Error", client.icons.error]
-    data.colour = client.colours.error
-    const embed = makeEmbed(message, data)
-    if (!(message.command?.application && data.ephemeral !== false) && data.deletable !== false) {
-      data.components ??= []
-      data.components.push(makeRow({
-        buttons: [{
+    const origin = new Error().stack
+    try {
+      if (message.command && !data.ignoreCooldown) clearCooldown(message)
+      const channel = message.channel ?? message
+
+      data.author = ["Error", client.icons.error]
+      data.colour = client.colours.error
+      const embed = makeEmbed(message, data)
+
+      if (!(message.command?.application && data.ephemeral !== false) && data.deletable !== false) {
+        data.components ??= []
+        data.components.push(component.row(component.button({
           emoji: client.emotes.binWhite,
           style: "red",
-          customId: `delete_${message.author.id}`
-        }]
-      }))
-    }
-    if (data.processing) try {
-      return await (message.command?.application ? message.editReply.bind(message) : data.processing.edit.bind(data.processing))({
+          id: `delete_${message.author.id}`
+        })))
+      }
+
+      const interaction = message.interaction ?? message
+      let deliveryError
+      if (interaction instanceof Discord.BaseInteraction) {
+        try {
+          let sent
+          if (interaction.replied || interaction.deferred) {
+            sent = await interaction.editReply({
+              allowedMentions: {},
+              embeds: [embed],
+              components: data.components,
+              fetchReply: true,
+              content: ""
+            })
+          } else {
+            sent = await interaction.reply({
+              allowedMentions: {},
+              embeds: [embed],
+              components: data.components,
+              ephemeral: data.ephemeral === false ? false : true,
+              fetchReply: true
+            })
+          }
+          interaction.message = sent
+          return interaction
+        } catch (err) {
+          deliveryError = err
+        }
+      } else {
+        if (data.processing instanceof Discord.Message) {
+          try {
+            const content = {
+              allowedMentions: {},
+              embeds: [embed],
+              components: data.components,
+              content: ""
+            }
+            await delayEdit(data.processing, content)
+            return await data.processing.edit(content)
+          } catch {}
+        }
+        try {
+          return await message.reply({
+            allowedMentions: {},
+            embeds: [embed],
+            components: data.components
+          })
+        } catch (err) {
+          deliveryError = err
+        }
+      }
+      if (typeof channel.send !== "function" || message.guildId && !channel.guild) {
+        throw deliveryError ?? new Error(`Unable to send error message as the channel is not accessible (${channel.constructor?.name ?? typeof channel}${channel.id ? ` ${channel.id}` : ""}${message.guildId ? `, guild ${message.guildId}` : ""})`)
+      }
+      return await channel.send({
         embeds: [embed],
         components: data.components
       })
-    } catch {}
-    try {
-      return await (message.deferred ? message.editReply.bind(message) : message.reply.bind(message))({
-        embeds: [embed],
-        allowedMentions: { repliedUser: false },
-        components: data.components,
-        ephemeral: data.ephemeral === false ? false : true,
-        fetchReply: data.fetch
-      })
-    } catch {
-      return channel.send({
-        embeds: [embed],
-        components: data.components
-      })
+    } catch (err) {
+      if (err && typeof err === "object") err.origin = origin
+      throw err
     }
   },
   sendPrivateError(interaction, data) {
@@ -53,13 +97,6 @@ registerFunction(scriptName, {
       title: `Invalid argument type for \`${name.toTitleCase(true)}\``,
       description: `\`${limit(arg.toString())}\` is not a valid \`${type.toTitleCase(true)}\``,
       processing: data?.processing
-    })
-  },
-  sendParentError(message, processing) {
-    return sendError(message, {
-      title: "Unable to determine parent server",
-      description: "Please try again later\n\nPerhaps there is a server outage, or the server no longer exists",
-      processing
     })
   }
 })
