@@ -51,14 +51,12 @@ registerFunction(scriptName, async interaction => {
   } else if (isType.command(interaction, "User")) {
     args.unshift(target)
   }
-  if (testMode) {
+  try {
     await command.execute(interaction, ...args)
-  } else {
-    try {
-      await command.execute(interaction, ...args)
-    } catch (err) {
-      return commandError(interaction, err)
-    }
+  } catch (err) {
+    clearCommandInstance(interaction)
+    if (testMode) throw err
+    return commandError(interaction, err)
   }
   postCommand(interaction)
 })

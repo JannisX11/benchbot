@@ -87,14 +87,12 @@ registerFunction(scriptName, async interaction => {
     client.commandInstances[command.command] ??= []
     client.commandInstances[command.command].push(interaction.channelId)
   }
-  if (testMode) {
+  try {
     await command.execute(interaction, ...args)
-  } else {
-    try {
-      await command.execute(interaction, ...args)
-    } catch (err) {
-      return commandError(interaction, err)
-    }
+  } catch (err) {
+    clearCommandInstance(interaction)
+    if (testMode) throw err
+    return commandError(interaction, err)
   }
   postCommand(interaction)
 })
