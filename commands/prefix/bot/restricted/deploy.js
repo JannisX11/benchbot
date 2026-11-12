@@ -11,7 +11,7 @@ function setupOption(option, data, args) {
   if (data.type === "integer" || data.type === "number") {
     if (defined(data.min)) option.setMinValue(data.min)
     if (defined(data.max)) option.setMaxValue(data.max)
-  } else if (!data.type) {
+  } else if (data.type === "string") {
     if (data.minLength) option.setMinLength(data.minLength)
     if (data.maxLength) option.setMaxLength(data.maxLength)
   }
