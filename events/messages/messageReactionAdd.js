@@ -1,10 +1,12 @@
 registerEvent(scriptName, async (reaction, user) => {
   if (user.bot || !reaction.emoji.id) return
-  let message
-  try {
-    message = await reaction.message.fetch()
-  } catch {
-    return
+  let message = reaction.message
+  if (message.partial) {
+    try {
+      message = await message.fetch()
+    } catch {
+      return
+    }
   }
   if (!message.guild) return
   if (reaction.emoji.id === config.emotes.delete) {
