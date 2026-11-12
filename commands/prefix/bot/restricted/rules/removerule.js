@@ -1,6 +1,7 @@
 registerPrefixCommand(scriptName, prefixPath, {
   description: "Remove a rule from the server rules.",
   guildOnly: true,
+  permissions: ["ManageGuild"],
   aliases: ["ruleremove"],
   arguments: [{
     type: "number",
