@@ -33,10 +33,10 @@ registerFunction(scriptName, {
       const details = {
         type: displayName
       }
+      argType.render?.(details, args)
       if (defined(args.default)) {
         details.Default = args.default
       }
-      argType.render?.(details, args)
       let str = `- ${args.required ? "*" : ""}**${args.id}** · `
       if (argType.link) {
         str += `[${details.type}](${argType.link})`
