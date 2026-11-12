@@ -66,10 +66,20 @@ registerFunction(scriptName, async (message, command) => {
   return true
 })
 
+const commandPermCache = new Map()
+
+function fetchCommandPerms(guild, command) {
+  const key = `${guild.id}:${command}`
+  const cached = commandPermCache.get(key)
+  if (cached && cached.expires > Date.now()) return cached.perms
+  const perms = guild.commands.permissions.fetch({ command }).catch(e => [])
+  commandPermCache.set(key, { perms, expires: Date.now() + 60000 })
+  return perms
+}
+
 async function applicationPermChecks(message, slashCommand) {
   if (hasPerm(message.member, "Administrator")) return true
-  const commandPerms = (await message.guild.commands.permissions.fetch({ command: slashCommand.id }).catch(e => []))
-  const clientPerms = (await message.guild.commands.permissions.fetch({ command: client.user.id }).catch(e => []))
+  const [commandPerms, clientPerms] = await Promise.all([fetchCommandPerms(message.guild, slashCommand.id), fetchCommandPerms(message.guild, client.user.id)])
   do {
     const channel = commandPerms.find(e => e.id === message.channel.id)?.permission
     if (channel === false) return
