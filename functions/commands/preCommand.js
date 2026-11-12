@@ -9,7 +9,7 @@ registerFunction(scriptName, async (message, command) => {
     return
   }
   Object.defineProperty(message, "command", {
-    value: Object.assign({}, command)
+    value: Object.assign({}, command, { toString: () => `${config.prefix}${name}` })
   })
   if (await permCheck(message, command) !== true) return
   if (!await cooldownCheck(message, command)) return
@@ -20,7 +20,6 @@ registerFunction(scriptName, async (message, command) => {
     })
     return
   }
-  command.toString = () => `${config.prefix}${name}`
   if (!message.member) {
     Object.defineProperty(message, "member", {
       value: createMember(message.author)
