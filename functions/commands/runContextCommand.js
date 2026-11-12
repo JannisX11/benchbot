@@ -10,12 +10,15 @@ registerFunction(scriptName, async interaction => {
   let args = []
   if (command.arguments) {
     const modal = {
+      id: interaction.id,
       title: command.name,
       rows: command.arguments
     }
+    const user = interaction.user
     await interaction.showModal(makeModal(modal))
     const response = await interaction.awaitModalSubmit({
-      time: 300000
+      time: 300000,
+      filter: e => e.customId === modal.id && e.user.id === user.id
     }).catch(e => {
       if (e.message !== "Collector received no interactions before ending with reason: time") console.error(e)
     })
