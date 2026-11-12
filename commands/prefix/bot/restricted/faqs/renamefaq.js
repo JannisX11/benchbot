@@ -33,7 +33,7 @@ registerPrefixCommand(scriptName, prefixPath, {
     }
   ],
   async execute(message, ...args) {
-    args = args.slice(0, 4).map(e => e.toLowerCase().trim().replace(/_/g, "-"))
+    args = args.slice(0, 4).map(e => e.toLowerCase().trim().replace(/_|\s/g, "-"))
     if (args[0] === args[2] && args[1] === args[3]) {
       return sendError(message, {
         title: "Unable to rename FAQ",
