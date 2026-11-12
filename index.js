@@ -291,9 +291,9 @@ const handleError = async error => {
     console.error(err)
     console.error(error.message)
     if (error instanceof Discord.DiscordAPIError) {
-      console.error(error.httpStatus)
-      console.error(error.method.toUpperCase(), error.path)
-      if (error.requestData?.json) console.error(JSON.stringify(error.requestData.json))
+      console.error(error.status)
+      console.error(error.method?.toUpperCase(), error.url)
+      if (error.requestBody?.json) console.error(JSON.stringify(error.requestBody.json))
     }
     console.error(error.stack)
   }
