@@ -1,10 +1,12 @@
 registerEvent(scriptName, async (reaction, user) => {
   if (user.bot || !reaction.emoji.id) return
-  let message
-  try {
-    message = await reaction.message.fetch()
-  } catch {
-    return
+  let message = reaction.message
+  if (message.partial) {
+    try {
+      message = await message.fetch()
+    } catch {
+      return
+    }
   }
   if (!message.guild) return
   if (reaction.emoji.id === config.emotes.delete) {
@@ -40,7 +42,7 @@ registerEvent(scriptName, async (reaction, user) => {
           while (posts.length) {
             const buttons = posts.slice(0, 5)
             posts = posts.slice(5)
-            components.push(makeRow({ buttons }))
+            components.push(component.row(...buttons.map(e => component.button(e))))
           }
           sendMessage(await getChannel(config.channels.showcase), {
             message: `Congratulations ${author}!`,

@@ -45,7 +45,7 @@ registerFunction(scriptName, async (message, command) => {
     }
   } catch (error) {
     await sendError(message, {
-      title: "An error occured while processing that command:",
+      title: "An error occurred while processing that command",
       description: `\`\`\`${error.message}\`\`\``,
       footer: ["This error has been logged."]
     })
@@ -56,7 +56,7 @@ registerFunction(scriptName, async (message, command) => {
       title,
       fields: [
         ["Command", `\`${config.prefix}${message.command.name}\``, false],
-        message.command.application ? [`Command sent by \`${message.author.username}\``, getFullCommand(message)] : [`Message sent by \`${message.author.username}\``, limit(message.content, 1024)],
+        message.command.application ? [`Command sent by \`${message.author.username}\``, limit(getFullCommand(message), 1024)] : [`Message sent by \`${message.author.username}\``, limit(message.content, 1024)],
         ["Error message", `\`${limit(error.message, 1000)}\``, false],
         ["Stack", `\`\`\`${limit(error.stack.toString(), 1000)}\`\`\``, false]
       ],
@@ -66,10 +66,20 @@ registerFunction(scriptName, async (message, command) => {
   return true
 })
 
+const commandPermCache = new Map()
+
+function fetchCommandPerms(guild, command) {
+  const key = `${guild.id}:${command}`
+  const cached = commandPermCache.get(key)
+  if (cached && cached.expires > Date.now()) return cached.perms
+  const perms = guild.commands.permissions.fetch({ command }).catch(e => [])
+  commandPermCache.set(key, { perms, expires: Date.now() + 60000 })
+  return perms
+}
+
 async function applicationPermChecks(message, slashCommand) {
   if (hasPerm(message.member, "Administrator")) return true
-  const commandPerms = (await message.guild.commands.permissions.fetch({ command: slashCommand.id }).catch(e => []))
-  const clientPerms = (await message.guild.commands.permissions.fetch({ command: client.user.id }).catch(e => []))
+  const [commandPerms, clientPerms] = await Promise.all([fetchCommandPerms(message.guild, slashCommand.id), fetchCommandPerms(message.guild, client.user.id)])
   do {
     const channel = commandPerms.find(e => e.id === message.channel.id)?.permission
     if (channel === false) return

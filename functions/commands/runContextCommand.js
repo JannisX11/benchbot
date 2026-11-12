@@ -1,31 +1,62 @@
 registerFunction(scriptName, async interaction => {
-  interaction.author = interaction.user
   const command = client.contextCommands.get(interaction.commandName)
-  const commandName = command.command
-  Object.defineProperty(interaction, "command", {
-    get: () => command
-  })
-  if (await permCheck(interaction, command) !== true) return
-  if (!await cooldownCheck(interaction, command)) return
-  if (!interaction.member) interaction.member = createMember(interaction.user)
-  interaction.commandRun = interaction.commandName
-  let args = []
-  if (isType.command(interaction, "Message")) interaction.reference = {
-    channelId: interaction.channelId,
-    messageId: interaction.targetId,
-    guildId: interaction.guildId
-  }
-  else if (isType.command(interaction, "User")) {
-    const member = await argTypes.member(interaction.targetId, {
-      message: interaction
+  if (!command) {
+    return sendError(interaction, {
+      description: "This command no longer exists"
     })
-    if (!member || member instanceof Discord.Message) return
-    args.unshift(member)
   }
-  if (testMode) await command.execute(interaction, ...args)
-  else try {
+  if (await preCommand(interaction, command) !== true) return
+  interaction.commandRun = interaction.commandName
+  const target = interaction.targetMember instanceof Discord.GuildMember ? interaction.targetMember : interaction.targetUser && createMember(interaction.targetUser)
+  let args = []
+  if (command.arguments) {
+    const modal = {
+      id: interaction.id,
+      title: command.name,
+      rows: command.arguments
+    }
+    const user = interaction.user
+    await interaction.showModal(makeModal(modal))
+    const response = await interaction.awaitModalSubmit({
+      time: 300000,
+      filter: e => e.customId === modal.id && e.user.id === user.id
+    }).catch(e => {
+      if (e.message !== "Collector received no interactions before ending with reason: time") console.error(e)
+    })
+    if (!response) return
+    const fields = {}
+    const [modal2, errorFields] = await parseModalFields(response, modal, fields)
+    if (errorFields.length) return sendPrivateError(response, {
+      title: "There were some issues with that input",
+      fields: errorFields
+    })
+    args = Object.values(fields)
+    response.command = interaction.command
+    response.commandRun = interaction.commandRun
+    response.commandName = interaction.commandName
+    response.member = interaction.member
+    response.targetMessage = interaction.targetMessage
+    response.targetId = interaction.targetId
+    response.commandType = interaction.commandType
+    response.author = interaction.author
+    interaction = response
+  }
+  if (isType.command(interaction, "Message")) {
+    interaction.reference = {
+      message: interaction.targetMessage,
+      channelId: interaction.channelId,
+      messageId: interaction.targetId,
+      guildId: interaction.guildId
+    }
+  } else if (isType.command(interaction, "User")) {
+    args.unshift(target)
+  }
+  try {
     await command.execute(interaction, ...args)
-  } catch(error) {
-    return commandError(interaction, error)
+  } catch (err) {
+    clearCommandInstance(interaction)
+    if (testMode) throw err
+    return commandError(interaction, err)
   }
+  postCommand(interaction)
 })

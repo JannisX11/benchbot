@@ -1,7 +1,5 @@
 registerPrefixCommand(scriptName, prefixPath, {
-  help: {
-    description: "Send the job channels overview message."
-  },
+  description: "Send the job channels overview message.",
   permissions: ["BotOwner"],
   async execute(message) {
     sendMessage(message.channel, {
@@ -39,7 +37,7 @@ Use the button below to gain access to the Job Channels.
         component.row(
           component.button({
             id: "jobs_access_button",
-            label: "Get Job Channel Access",
+            label: "Get job channel access",
             style: "blue"
           })
         )

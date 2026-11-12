@@ -1,7 +1,5 @@
 registerPrefixCommand(scriptName, prefixPath, {
-  help: {
-    description: "Close the current help post."
-  },
+  description: "Close the current help post.",
   typingless: true,
   guildOnly: true,
   aliases: ["closethread", "threadclose", "closepost", "closeforum", "postclose", "forumclose", "setarchived"],
@@ -11,9 +9,9 @@ registerPrefixCommand(scriptName, prefixPath, {
       title: "Unsupported channel type",
       description: "This command can only be run in a thread"
     })
-    if (!message.channel.parent.name.startsWith("help-") && message.author.id !== message.channel.ownerId && !hasPerm(message.member, "ManageMessages", message.channel)) return sendError(message, {
+    if (!message.channel.parent.name.startsWith("help-") && message.author.id !== message.channel.ownerId && !hasPerm(message.member, "ManageThreads", message.channel)) return sendError(message, {
       title: "Missing required permissions",
-      description: "You need either be the thread owner, or have the `Manage Threads` permission to run that command"
+      description: "You need to either be the thread owner, or have the `Manage Threads` permission to run that command"
     })
     await react(message, client.emotes.success)
     message.channel.setArchived()

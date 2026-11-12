@@ -3,7 +3,7 @@ registerFunction(scriptName, async (message, error) => {
   if (message.command && error.message === "Missing Permissions") return react(message, client.emotes.crossWhite)
   console.error(error)
   await sendError(message, {
-    title: "An error occured while processing that command:",
+    title: "An error occurred while processing that command",
     description: `\`\`\`${error.message}\`\`\``,
     footer: ["This error has been logged."]
   }).catch(() => {})
@@ -15,7 +15,7 @@ registerFunction(scriptName, async (message, error) => {
       await sendMessage(await getChannel(config.channels.errors), {
         title,
         fields: [
-          ["Command", `\`\`${client.prefix}${message.command.name}\`\``, false],
+          ["Command", `\`\`${config.prefix}${message.command.name}\`\``, false],
           [`Message sent by \`${message.author.username}\``, limit(message.content, 1024)],
           ["Error message", `\`\`${limit(error.message, 1000)}\`\``, false],
           ["Stack", `\`\`\`${limit(error.stack.toString(), 1000)}\`\`\``, false]

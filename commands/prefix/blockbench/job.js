@@ -1,7 +1,5 @@
 registerPrefixCommand(scriptName, prefixPath, {
-  help: {
-    description: "Creates a new job post."
-  },
+  description: "Creates a new job post.",
   aliases: ["newjob", "jobnew"],
   async execute(message) {
     let member = message.member
@@ -29,7 +27,7 @@ registerPrefixCommand(scriptName, prefixPath, {
       options: ["Start!"],
       keep: true
     })
-    if (!start) return
+    if (!start[0]) return
     let processing = start[1]
 
     async function askSimple(args) {
@@ -39,47 +37,54 @@ registerPrefixCommand(scriptName, prefixPath, {
         message: processing,
         keep: true
       })
-      if (!ask) return
+      if (!ask[0]) return
       processing = ask[1]
       return args.options[parseInt(ask[0])]
     }
 
     async function askDetailed(args, func) {
-      processing = await sendMessage(message, {
-        description: args.question,
-        fields: args.fields,
-        components: [makeRow({
-          buttons: [
-            {
-              label: args.button ?? "Answer",
-              emoji: client.emotes.pencilWhite,
-              customId: "modal"
-            },
-            args.skippable ? {
-              label: "Skip",
-              emoji: client.emotes.arrowRightWhite,
-              customId: "skip"
-            } : undefined
-          ].filter(Boolean)
-        })],
-        fetch: true,
-        processing
-      })
-      if (!await modalHandler(message, processing, {
-        title: `Job Creator - ${args.title}`,
-        rows: args.options.map(e => {
-          e.required = true
-          e.invalidChars = /\\|`/
-          return { text: e }
-        })
-      }, fields => {
-        func(fields)
-        return true
-      }, {
-        authorOnly: true,
-        leave: true,
+      const modal = await modalHandler(message, processing, {
+        prompt: {
+          components: [
+            component.container(message, [
+              args.question,
+              ...(args.fields ?? []).map(e => `### ${e[0]}\n${e[1]}`)
+            ]),
+            component.row(...[
+              component.button({
+                id: "modal",
+                label: args.button ?? "Answer",
+                emoji: client.emotes.pencilWhite
+              }),
+              args.skippable ? component.button({
+                id: "skip",
+                label: "Skip",
+                emoji: client.emotes.arrowRightWhite
+              }) : undefined
+            ].filter(Boolean))
+          ]
+        },
+        modal: {
+          title: `Job Creator - ${args.title}`,
+          rows: args.options.map(e => ({
+            label: e.label,
+            type: e.type,
+            invalidChars: /\\|`/,
+            component: component.input({
+              id: e.id,
+              placeholder: e.placeholder,
+              maxLength: e.maxLength ?? (e.type === "url" ? 256 : undefined),
+              minLength: e.minLength,
+              long: e.long,
+              required: true
+            })
+          }))
+        },
         timeout: 600
-      }, interaction => true)) return
+      })
+      if (modal.timeout) return
+      processing = modal.message ?? processing
+      func(modal.fields)
       return true
     }
 
@@ -97,11 +102,11 @@ registerPrefixCommand(scriptName, prefixPath, {
       })
       if (!job.position) return
       if (!await askDetailed({
-        title: "Asset Type",
+        title: "Asset type",
         question: "What type of assets do you need? For example, a **__texture__**, **__model__**, **__animation__**, **__build__**, etc…",
         options: [{
           id: "assetType",
-          label: "Asset Type",
+          label: "Asset type",
           placeholder: "texture / model / animation / build / etc",
           maxLength: 32,
           minLength: 5
@@ -177,20 +182,20 @@ registerPrefixCommand(scriptName, prefixPath, {
         options: [
           {
             id: "assetType",
-            label: "Asset Type",
+            label: "Asset type",
             placeholder: "textures / models / animations / builds / etc",
             maxLength: 32,
             minLength: 5
           },
           {
             id: "portfolio",
-            label: "Your Portfolio",
+            label: "Your portfolio",
             placeholder: "https://sketchfab.com/jannisx11",
             type: "url"
           },
           {
             id: "rate",
-            label: "Your Rate",
+            label: "Your rate",
             placeholder: "$15/h",
             maxLength: 16,
             minLength: 3
@@ -211,7 +216,7 @@ registerPrefixCommand(scriptName, prefixPath, {
         job.about = fields.about
       })) return
       if (!await askDetailed({
-        title: "Showcase Images",
+        title: "Showcase images",
         question: "Would you like to add some showcase images?",
         button: "Add images",
         skippable: true,
@@ -262,10 +267,11 @@ registerPrefixCommand(scriptName, prefixPath, {
         })
       }
     }
+    if (processing) deleteMessage(processing.message ?? processing)
     check = await confirm(message, {
       description: `Here is a preview of your job post. It will be posted in <#${job.channel}>\n\nDo you want to submit the job post?`,
       embeds: job.embeds,
-      processing
+      cv2: false
     })
     if (!check[0]) return editMessage(check[1], {
       description: "The job post has been aborted"
@@ -274,12 +280,10 @@ registerPrefixCommand(scriptName, prefixPath, {
     const sent = await sendMessage(await getChannel(job.channel), { embeds: job.embeds })
     sendMessage(message, {
       description: `Your job has been posted!\n\nIf you want to remove the job post, you can react with <:delete:${config.emotes.delete}> to remove it.`,
-      components: [makeRow({
-        buttons: [{
-          label: "Jump to post…",
-          url: `https://discord.com/channels/${sent.guildId}/${sent.channelId}/${sent.id}`
-        }]
-      })],
+      components: [component.row(component.button({
+        label: "Jump to post…",
+        url: `https://discord.com/channels/${sent.guildId}/${sent.channelId}/${sent.id}`
+      }))],
       processing
     })
   }

@@ -1,5 +1,8 @@
 registerFunction(scriptName, (exe, args, data = { stdio: "ignore" }) => {
   const p = child_process.spawn(exe, args, data)
+  p.stdin?.on("error", err => {
+    if (err.code !== "EPIPE" && err.code !== "EOF") throw err
+  })
   p.promise = new Promise((fulfil, reject) => {
     p.on("close", () => {
       fulfil() 

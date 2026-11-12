@@ -26,7 +26,7 @@ registerFunction(scriptName, {
         if (args.id) return slashCommand.id
         command = args.guild.commands.cache.get(slashCommand.id)
         if (!command) {
-          await args.guild.commands.fetch(slashCommand.id).catch(() => {})
+          command = await args.guild.commands.fetch(slashCommand.id).catch(() => {})
           if (!command) return
         }
       } else {
@@ -44,7 +44,7 @@ registerFunction(scriptName, {
         if (args.id) return slashCommand.id
         command = client.application.commands.cache.get(slashCommand.id)
         if (!command) {
-          await client.application.commands.fetch(slashCommand.id)
+          command = await client.application.commands.fetch(slashCommand.id).catch(() => {})
           if (!command) return
         }
       } else {
