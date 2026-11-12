@@ -7,6 +7,7 @@ registerFunction(scriptName, async interaction => {
   }
   if (await preCommand(interaction, command) !== true) return
   interaction.commandRun = interaction.commandName
+  const target = interaction.targetMember instanceof Discord.GuildMember ? interaction.targetMember : interaction.targetUser && createMember(interaction.targetUser)
   let args = []
   if (command.arguments) {
     const modal = {
@@ -48,14 +49,7 @@ registerFunction(scriptName, async interaction => {
       guildId: interaction.guildId
     }
   } else if (isType.command(interaction, "User")) {
-    let member
-    if (interaction.guild) {
-      member = await interaction.guild.members.fetch(interaction.targetId)
-    } else {
-      member = createMember(await client.users.fetch(interaction.targetId))
-    }
-    if (!member) return
-    args.unshift(member)
+    args.unshift(target)
   }
   if (testMode) {
     await command.execute(interaction, ...args)
