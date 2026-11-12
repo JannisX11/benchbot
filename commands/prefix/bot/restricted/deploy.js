@@ -121,7 +121,7 @@ registerPrefixCommand(scriptName, prefixPath, {
             }
           }
           calculate(command)
-          if (size > 4000) throw Error(`Slash command over character limit: \`${command.name}\` is at \`${size}\` characters`)
+          if (size > 8000) throw Error(`Slash command over character limit: \`${command.name}\` is at \`${size}\` characters`)
         }
       }
 
