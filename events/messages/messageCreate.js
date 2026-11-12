@@ -14,6 +14,7 @@ registerEvent(scriptName, async message => {
     return
   }
   if (spamCheck(message)) return
+  if (await voiceChatCleanup.messageCreate(message)) return
   if (message.content === `<@${client.user.id}>` || message.content === `<@!${client.user.id}>`) return sendMessage(message, {
     title: client.user.displayName,
     thumbnail: avatar(client.user),
