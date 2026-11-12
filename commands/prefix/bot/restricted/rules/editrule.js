@@ -46,7 +46,7 @@ registerPrefixCommand(scriptName, prefixPath, {
             label: "Rule Description",
             component: component.input({
               id: "description",
-              maxLength: 512,
+              maxLength: 256,
               placeholder: limit(rule[1], 64),
               long: true
             })
