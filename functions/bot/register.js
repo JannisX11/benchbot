@@ -90,13 +90,13 @@ registerFunction(scriptName, {
           argument.allowedCharactersRegex = new RegExp(`[^${argument.allowedCharacters}]`, "i")
           argument.allowedCharacters = argument.allowedCharacters.replace("\\\\", "\\")
           if (argument.allowedCharacters.includes("\\n")) argument.allowedCharacters = argument.allowedCharacters.replace("\\n", "") + " newline"
-          if (argument.allowedCharacters.includes("\s")) argument.allowedCharacters = argument.allowedCharacters.replace("\s", "") + " space"
+          if (argument.allowedCharacters.includes("\\s")) argument.allowedCharacters = argument.allowedCharacters.replace("\\s", "") + " space"
         }
         if (argument.disallowedCharacters) {
           argument.disallowedCharactersRegex = new RegExp(`[${argument.disallowedCharacters}]`, "i")
           argument.disallowedCharacters = argument.disallowedCharacters.replace("\\\\", "\\")
           if (argument.disallowedCharacters.includes("\\n")) argument.disallowedCharacters = argument.disallowedCharacters.replace("\\n", "") + " newline"
-          if (argument.disallowedCharacters.includes("\s")) argument.disallowedCharacters = argument.disallowedCharacters.replace("\s", "") + " space"
+          if (argument.disallowedCharacters.includes("\\s")) argument.disallowedCharacters = argument.disallowedCharacters.replace("\\s", "") + " space"
         }
       }
       if (!command.arguments.find(e => defined(e.rest))) {
