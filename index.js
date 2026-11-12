@@ -83,7 +83,7 @@ globalThis.client = new Discord.Client({
     // "GuildIntegrations",
     // "GuildWebhooks",
     // "GuildInvites",
-    // "GuildVoiceStates",
+    "GuildVoiceStates",
     // "GuildPresences",
     "GuildMessages",
     "GuildMessageReactions",
