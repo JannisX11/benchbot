@@ -10,8 +10,9 @@ registerArgType(scriptName, async (item, data) => {
   } catch {}
   try {
     const id = item.replace(/\D+/g, "")
+    const isId = /^\d{17,20}$/.test(id)
     if (data.message.guild) {
-      member = await getMember(data.message.guild, id)
+      if (isId) member = await getMember(data.message.guild, id)
       if (!member) {
         if (!data.noText) try {
           if (item.startsWith("@")) item = item.slice(1)
@@ -32,13 +33,10 @@ registerArgType(scriptName, async (item, data) => {
     }
     if (!member) {
       let user
-      try {
-        user = await client.users.fetch(id)
-      } catch {
-        if (!data.noText) {
-          const ban = (await data.message.guild.bans.fetch()).find(e => e.user.username.toLowerCase() === item)
-          if (ban) user = ban.user
-        }
+      if (isId) user = await client.users.fetch(id).catch(() => {})
+      if (!user && !data.noText) {
+        const ban = (await data.message.guild.bans.fetch()).find(e => e.user.username.toLowerCase() === item)
+        if (ban) user = ban.user
       }
       if (user) member = createMember(user)
     }
