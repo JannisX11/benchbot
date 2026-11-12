@@ -68,7 +68,7 @@ registerFunction(scriptName, async (guild, message) => {
       return m[0]
     }
   }))
-  for (const [i, m] of matches.entries()) message = message.replace(m[0], replacements[i])
+  for (const [i, m] of matches.entries()) message = message.replace(m[0], () => replacements[i])
   for (const [src, dst] of Object.entries(map)) message = message.replaceAll(src, dst)
   return message
 })
