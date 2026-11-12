@@ -24,7 +24,7 @@ registerFunction(scriptName, async (message, embeds, args) => {
     }
     return embed
   }
-  index = args?.index ?? 0
+  let index = args?.index ?? 0
   const paginator = await sendMessage(message, {
     embeds: [await getEmbed(index)],
     processing: args?.processing,
