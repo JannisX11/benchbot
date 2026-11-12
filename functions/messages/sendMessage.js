@@ -54,6 +54,7 @@ async function send(message, channel, processing, content) {
       deliveryError = err
     }
   }
+  if (deliveryError && interaction instanceof Discord.BaseInteraction && (content.ephemeral || interaction.ephemeral)) throw deliveryError
   if (typeof channel.send !== "function" || message.guildId && !channel.guild) {
     throw deliveryError ?? new Error(`Unable to send message as the channel is not accessible (${channel.constructor?.name ?? typeof channel}${channel.id ? ` ${channel.id}` : ""}${message.guildId ? `, guild ${message.guildId}` : ""})`)
   }

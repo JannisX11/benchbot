@@ -70,6 +70,7 @@ registerFunction(scriptName, {
           deliveryError = err
         }
       }
+      if (deliveryError && interaction instanceof Discord.BaseInteraction && (interaction.replied || interaction.deferred ? interaction.ephemeral : data.ephemeral !== false)) throw deliveryError
       if (typeof channel.send !== "function" || message.guildId && !channel.guild) {
         throw deliveryError ?? new Error(`Unable to send error message as the channel is not accessible (${channel.constructor?.name ?? typeof channel}${channel.id ? ` ${channel.id}` : ""}${message.guildId ? `, guild ${message.guildId}` : ""})`)
       }
